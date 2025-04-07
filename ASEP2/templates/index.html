@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>College Classroom Manager</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/index.css' %}">
+  <style>.modal-content {
+    background-color:rgb(31, 49, 78); /* Dark bluish */
+    color: #f1f1f1;
+  }
+  </style>
+</head>
+<body>
+
+  {% if messages %}
+  {% for message in messages %}
+    <div class="alert {{ message.tags }}" id="alert-{{ forloop.counter }}">
+      {{ message }}
+    </div>
+
+    <script>
+      // Auto-hide alert after 5 seconds
+      setTimeout(function() {
+        var el = document.getElementById("alert-{{ forloop.counter }}");
+        if (el) {
+          el.style.display = "none";
+        }
+      }, 5000);
+    </script>
+  {% endfor %}
+{% endif %}
+
+
+  <header>
+    <h1>College Classroom Manager</h1>
+    <p>Smart scheduling and live classroom availability system</p>
+    <button onclick="openLogin()">Login</button>
+  </header>
+
+  <section class="features">
+    <div class="card">
+      <h3>📅 View Schedules</h3>
+      <p>Get the complete class schedule for every room and every branch.</p>
+    </div>
+    <div class="card">
+      <h3>🏫 Locate Classrooms</h3>
+      <p>Find classrooms with map-based navigation across the campus.</p>
+    </div>
+    <div class="card">
+      <h3>✅ Check Availability</h3>
+      <p>See which rooms are free right now for group study or extra sessions.</p>
+    </div>
+    <div class="card">
+      <h3>🧑‍🏫 Know Who's Teaching</h3>
+      <p>View current lectures, faculty name, and subject in each room.</p>
+    </div>
+  </section>
+
+  <footer>
+    © 2025 College Project by Group 13
+  </footer>
+
+  <!-- Login Modal -->
+  <div class="modal" id="loginModal">
+    <div class="modal-content">
+      <span class="close" onclick="closeLogin()" style = "color:">&times;</span>
+      <h2>Login</h2>
+  
+      <!-- 🔔 Info Message -->
+      <div class="login-info-message">
+        Username should be your <strong>VIT.edu email</strong> and password is your <strong>PRN number</strong>.
+      </div>
+  
+      <form id="loginForm" method="POST">
+        {% csrf_token %}
+        <label for="role">I am a:</label>
+        <select id="role" name= 'role' required>
+          <option value="student">Student</option>
+          <option value="faculty">Faculty</option>
+        </select>
+  
+        <label for="username">Username:</label>
+        <input type="email" id="username" name="username" required />
+  
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required />
+  
+        <button type="submit">Login</button>
+      </form>
+    </div>
+  </div>
+  
+  <script>
+    function openLogin() {
+      
+      document.getElementById("loginModal").style.display = "flex";
+    }
+    function closeLogin() {
+      document.getElementById("loginModal").style.display = "none";
+    }
+
+    {% comment %} document.getElementById("loginForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const role = document.getElementById("role").value;
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      // Dummy credentials check (you can replace this with real auth logic)
+      if (username === "student" && password === "1234" && role === "student") {
+        alert("Student login successful!");
+        window.location.href = "student-dashboard.html";
+      } else if (username === "faculty" && password === "abcd" && role === "faculty") {
+        alert("Faculty login successful!");
+        window.location.href = "faculty-dashboard.html";
+      } else {
+        alert("Invalid credentials! Try again.");
+      }
+    }); {% endcomment %}
+  </script>
+</body>
+</html>
+ 
