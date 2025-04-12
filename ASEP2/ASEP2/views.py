@@ -63,6 +63,6 @@ def student_schedule(request):
         'hours': hours,
         'today': today,
         # "student":request.session.get("branch")+ " - "+user_data["div"]
-        "student": f"{user_data['branch']} - {user_data["div"]}"
+        "student": f"{user_data['branch']} - {user_data['div']}"
     }
     return render(request, 'student_schedule.html', data)
