@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Schedule</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/schedule.css' %}">
+</head>
+<body>
+    <div class="dashboard-header">
+        <h1>📅 Student Schedule</h1>
+        <h3>Branch : {{student}}</h3>
+        <p>Your class routine for the week</p>
+
+        <a href="{% url 'login' %}" class="logout-btn">Back</a>
+    </div>
+
+    <div class="schedule-wrapper">
+        <div class="schedule-table">
+            <div class="schedule-row schedule-header">
+                <div class="time-slot">Time</div>
+                {% for day in days %}
+                  <div class="day {% if day == today %}highlight-day{% endif %}">
+                    {{ day }}
+                  </div>
+                {% endfor %}
+              </div>
+              
+              {% for hour in hours %}
+                <div class="schedule-row">
+                  <div class="time-slot">{{ hour }}:00 - {{ hour|add:"1" }}:00</div>
+                  {% for day in days %}
+                    <div class="schedule-box {% if day == today %}highlight-box{% endif %}">
+                      <h4>Room: B101</h4>
+                      <p>Maths - Prof. Sharma</p>
+                      <p><em>Theory</em></p>
+                    </div>
+                  {% endfor %}
+                </div>
+              {% endfor %}
+              
+              
+        </div>
+    </div>
+
+    <footer>
+        © 2025 Student Dashboard | VIT College
+    </footer>
+
+    <script>
+        // Highlight today's column
+        const todayIndex = new Date().getDay(); // Sunday = 0
+        const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+        if (todayIndex >= 1 && todayIndex <= 6) {
+            document.getElementById(days[todayIndex - 1]).classList.add("highlight-today");
+        }
+    </script>
+</body>
+</html>

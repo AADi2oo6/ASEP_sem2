@@ -20,6 +20,9 @@ from ASEP2 import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path('',views.index),
-    path("",views.login_view),
+    path('',views.index,name = "index"),
+    # path("",views.login_view,name= "index"),
+    path("logOut/",views.logout_views,name="logout"),
+    path('dashboard/', views.login_view, name='login'),
+    path("student_schedule/",views.student_schedule),
 ]

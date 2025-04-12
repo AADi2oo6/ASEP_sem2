@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    {% block title %}
+    <title>Student Dashboard</title>
+    {% endblock title %}
+
+    
+{% block head %}
+    
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/student_dashboard.css' %}">
+{% endblock head %}
+
+</head>
+{% block body %}
+
+<body>
+    <header class="dashboard-header">
+    <h1>Welcome, {{ name }}</h1>
+    <p>Your personalized student dashboard</p>
+    <a href="{% url 'index' %}" class="logout-btn">Logout</a>
+  </header>
+
+  <section class="dashboard-grid">
+    <div class="card">
+      📅 <h3>View Schedule</h3>
+      <p>Check your daily class routine and timing.</p>
+      <a href="/student_schedule/">Open</a>
+    </div>
+
+    <div class="card">
+      ✅ <h3>Check Availability</h3>
+      <p>See which classrooms are currently free.</p>
+      <a href="">Open</a>
+    </div>
+
+    <div class="card">
+      🧑‍🏫 <h3>Who's Teaching</h3>
+      <p>Know which faculty is teaching in each room.</p>
+      <a href="">Open</a>
+    </div>
+
+    <div class="card">
+      🗺️ <h3>Locate Classrooms</h3>
+      <p>Find directions to your classroom.</p>
+      <a href="">Open</a>
+    </div>
+</section>
+
+<footer>
+    <p>© 2025 Student Dashboard | VIT College</p>
+</footer>
+{% endblock body %}
+</body>
+</html>

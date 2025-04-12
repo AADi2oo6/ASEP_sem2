@@ -74,17 +74,22 @@ WSGI_APPLICATION = 'ASEP2.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'ASEP2',
+#         'USER': 'root',
+#         'PASSWORD': '202510',
+#         'HOST': 'localhost',  # Or IP address if it's on another machine
+#         'PORT': '3306',        # Default MySQL port
+#     }
+# }
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ASEP2',
-        'USER': 'root',
-        'PASSWORD': '202510',
-        'HOST': 'localhost',  # Or IP address if it's on another machine
-        'PORT': '3306',        # Default MySQL port
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 
 # Password validation
