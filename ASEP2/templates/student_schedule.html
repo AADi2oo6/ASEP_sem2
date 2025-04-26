@@ -67,15 +67,16 @@
                     {% with day_dict=dic|get_item:day %}
                         {% with class_details=day_dict|get_item:hour %}
                             {% if class_details.0 %}
-                                <div class="schedule-box 
+                                <div class='schedule-box 
                                     {% if day == today %}highlight-box{% endif %}
                                     {% if class_details.3 == "Theory" %} theory-class
                                     {% elif class_details.3 == "Lab" %} lab-class
                                     {% elif class_details.3 == "Tutorial" %} tutorial-class
-                                    {% endif %}
-                                ">
+                                    {% endif %}'>
+                                
                                     <h4>Room No: {{ class_details.0 }}</h4>
-                                    <p>{{ class_details.1 }} - {{ class_details.2 }}</p>
+                                    <p>{{ class_details.1 }} </p>
+                                    <p>Prof. {{ class_details.2 }}</p>
                                     <p><em>{{ class_details.3 }}</em></p>
                                 </div>
                             {% else %}
