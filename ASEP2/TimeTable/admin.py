@@ -1,0 +1,58 @@
+from django.contrib import admin
+from .models import StudentsTT
+import re
+from datetime import datetime, timedelta
+
+@admin.register(StudentsTT)
+class StudentsTTAdmin(admin.ModelAdmin):
+    def get_changeform_initial_data(self, request):
+        try:
+            last_entry = StudentsTT.objects.latest('id')
+            
+            # Extract last time_slot
+            last_slot = last_entry.time_slot  # example: "8-9 AM"
+            
+            # Smartly calculate the next slot
+            new_slot = self.increment_time_slot(last_slot)
+            
+            return {
+                'course_name': last_entry.course_name,
+                'semester': last_entry.semester,
+                'day': last_entry.day,
+                'time_slot': new_slot,  # 🛠️ auto incremented time slot
+                'room_no': last_entry.room_no,
+                'teacher_name': last_entry.teacher_name,
+                'class_type': last_entry.class_type,
+                'subject_name': last_entry.subject_name,
+            }
+        except StudentsTT.DoesNotExist:
+            return super().get_changeform_initial_data(request)
+
+    list_display = ('id', "day", "course_name", "semester", "time_slot", "room_no", "subject_name", "teacher_name", "class_type",'batch')
+    list_filter = ("day", "semester", "course_name", "class_type")
+    search_fields = ("subject_name", "teacher_name", "course_name")
+
+    def increment_time_slot(self, last_slot):
+        """
+        Takes a string like '8-9 AM' and returns '9-10 AM'
+        Handles basic hour increment only (not fancy 12PM/AM switches)
+        """
+        match = re.match(r"(\d+)-(\d+)\s*(AM|PM)?", last_slot)
+        if match:
+            start_hour = int(match.group(1))
+            end_hour = int(match.group(2))
+            period = match.group(3) or "AM"  # default to AM if missing
+            
+            # Increment by 1 hour
+            start_hour += 1
+            end_hour += 1
+            
+            # Handle 12-hour format (simple logic)
+            if start_hour > 12:
+                start_hour -= 12
+            if end_hour > 12:
+                end_hour -= 12
+
+            return f"{start_hour}-{end_hour} {period}"
+
+        return last_slot  # fallback to same slot if parsing fails
