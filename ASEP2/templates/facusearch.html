@@ -4,49 +4,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Student Schedule</title>
-    <link rel="stylesheet" href="{% static 'css/schedule.css' %}">
-    <style>
-        .schedule-box {
-            flex: 1;
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: center;
-            min-height: 100px;
-            color: #000;
-            font-weight: bold;
-        }
-
-        .theory-class {
-            background-color: #d4edda;
-            color: #000;
-        }
-
-        .lab-class {
-            background-color: #4fe3ff;
-            color: #000;
-        }
-
-        .tutorial-class {
-            background-color: #fff3cd;
-            color: #000;
-        }
-
-        .empty-class {
-            background-color: #a9c3d7;
-            color: #888;
-        }
-    </style>
+    <title>Faculty Timetable</title>
+    <link rel="stylesheet" href="{% static 'css/facusearch.css' %}">
 </head>
 <body>
 
 <div class="dashboard-header">
-    <h1>📅 Student Schedule</h1>
-    <h3>Branch : {{ class }}, Batch : {{ batch }}</h3>
-    <p>Your class routine for the week</p>
+    <h1>👩‍🏫 Faculty Timetable</h1>
+    <p>View class schedule of a faculty member</p>
     <a href="{% url 'login' %}" class="logout-btn">Back</a>
-</div>
 
+    <form method="GET" class="search-bar">
+        <input type="text" name="faculty" placeholder="Enter Faculty Name" value="{{ selected_faculty }}">
+        <button type="submit">Search</button>
+    </form>
+</div>
+{%block tt%}
+{% if selected_faculty %}
 <div class="schedule-wrapper">
     <div class="schedule-table">
         <div class="schedule-row schedule-header">
@@ -73,7 +47,7 @@
                                     {% endif %}">
                                     <h4>Room No: {{ class_details.0 }}</h4>
                                     <p>{{ class_details.1 }}</p>
-                                    <p>Prof. {{ class_details.2 }}</p>
+                                    <p>{{ class_details.2 }}</p>
                                     <p><em>{{ class_details.3 }}</em></p>
                                 </div>
                             {% else %}
@@ -88,9 +62,10 @@
         {% endfor %}
     </div>
 </div>
-
+{% endif %}
+{%endblock tt%}
 <footer>
-    © 2025 Student Dashboard | VIT College
+    © 2025 Faculty Dashboard | VIT College
 </footer>
 
 <script>

@@ -14,6 +14,7 @@ class login(models.Model):
     batch = models.CharField(max_length=1,choices=BATCH_CHOICE, default=None,null = True)
 
 class Flogin(models.Model):
+    Name = models.CharField(max_length=40,default=None,null = True)
     userName = models.EmailField()
     Password = models.CharField(max_length=10)
 

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Send Announcement</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/announcement.css' %}">
+</head>
+<body>
+  <header class="dashboard-header">
+    <h1>📢 Faculty Announcements</h1>
+    <p>Send important updates to selected branch and division.</p>
+    <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+  </header>
+
+  <div class="announcement-container">
+    <textarea placeholder="Type your announcement here..."></textarea>
+
+    <label for="branch">Select Branch:</label>
+    <select id="branch" onchange="updateDivisions()">
+      <option value="">-- Select Branch --</option>
+      <option value="CS">CS</option>
+      <option value="CS-AIML">CS-AIML</option>
+      <option value="CS-AI">CS-AI</option>
+      <option value="AIDS">AIDS</option>
+      <option value="IT">IT</option>
+      <option value="CS-SE">CS-SE</option>
+      <option value="CS-DS">CS-DS</option>
+      <option value="CS-CBI">CS-CBI</option>
+      <option value="Instrumentation">Instrumentation</option>
+      <option value="ENTC">ENTC</option>
+      <option value="Mech">Mech</option>
+      <option value="Civil">Civil</option>
+    </select>
+
+    <label for="division">Select Division:</label>
+    <select id="division">
+      <option value="">-- Select Division --</option>
+    </select>
+
+    <button class="send-btn">Send Announcement</button>
+  </div>
+
+  <footer>
+    <p>© 2025 Faculty Dashboard | VIT College</p>
+  </footer>
+
+  <script>
+    const divisionsMap = {
+      "CS": 12,
+      "CS-AIML": 6,
+      "CS-AI": 6,
+      "AIDS": 6,
+      "IT": 6,
+      "CS-SE": 3,
+      "CS-DS": 3,
+      "CS-CBI": 3,
+      "Instrumentation": 3,
+      "ENTC": 6,
+      "Mech": 5,
+      "Civil": 1
+    };
+
+    function updateDivisions() {
+      const branch = document.getElementById("branch").value;
+      const divisionSelect = document.getElementById("division");
+      divisionSelect.innerHTML = `<option value="">-- Select Division --</option>`;
+      if (divisionsMap[branch]) {
+        const count = divisionsMap[branch];
+        for (let i = 0; i < count; i++) {
+          const division = String.fromCharCode(65 + i); // A, B, C...
+          const option = document.createElement("option");
+          option.value = division;
+          option.textContent = division;
+          divisionSelect.appendChild(option);
+        }
+      }
+    }
+  </script>
+</body>
+</html>

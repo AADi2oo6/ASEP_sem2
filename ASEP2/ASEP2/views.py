@@ -67,7 +67,7 @@ def student_schedule(request):
         print(i.time_slot)
 
     days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-    hours = ['8-9 AM', '9-10 AM', '10-11 AM', '11-12 PM', '12-1 PM', '1-2 PM', '2-3 PM', '3-4 PM', '4-5 PM', '5-6 PM']
+    hours = ['8-9 AM', '9-10 AM', '10-11 AM', '11-12 PM', '12-1 PM', '1-2 PM', '2-3 PM', '3-4 PM', '4-5 PM', '5-6 PM','6-7 PM','7-8 PM']
 
     dic = {}
 
@@ -96,3 +96,46 @@ def student_schedule(request):
 
     }
     return render(request, 'student_schedule.html', data)
+
+def buildingpage(request):
+  return render(request, 'buildingpage.html')
+
+def rooms(request):
+    rooms = range(1, 31)  # Create list of room numbers 1 to 30
+    return render(request, 'rooms.html', {'rooms': rooms})
+
+def floor(request):
+    return render(request, 'floor.html')
+
+def freeclassrooms(request):
+     availability = {
+        '1': ['101', '102', '103'],
+        '2': ['201', '202'],
+        '3': [],
+        '4': ['401', '402', '403', '404'],
+    }
+     return render(request, 'freeclassrooms.html', {'availability': availability})
+
+def faculty_timetable(request):
+    selected_faculty = request.GET.get('faculty', '')
+    timetable = {}  # Your logic to fetch timetable based on faculty
+    days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    hours = ['8-9 AM', '9-10 AM', '10-11 AM', '11-12 PM', '12-1 PM', '1-2 PM', '2-3 PM', '3-4 PM', '4-5 PM', '5-6 PM','6-7 PM','7-8 PM']
+
+    # `timetable` should be in the format:
+    # {'Monday': {'9:00-10:00': ('RoomNo', 'Subject', 'FacultyName', 'ClassType'), ...}, ...}
+
+    return render(request, 'facusearch.html', {
+        'selected_faculty': selected_faculty,
+        'dic': timetable,
+        'days': days,
+        'hours': hours,
+        # 'today': timezone.now().strftime('%A'),
+    })
+
+def branchschedule(request):
+    return render(request,'branchschedule.html')
+
+def announcements(request):
+    return render(request,'announcements.html')
+    

@@ -25,4 +25,11 @@ urlpatterns = [
     path("logOut/",views.logout_views,name="logout"),
     path('dashboard/', views.login_view, name='login'),
     path("student_schedule/",views.student_schedule),
+    path("buildingpage",views.buildingpage),
+    path("rooms",views.rooms),
+    path("floor",views.floor),
+    path("freeclassrooms",views.freeclassrooms),
+    path("faculty_timetable",views.faculty_timetable),
+    path("branchschedule",views.branchschedule),
+    path("announcements",views.announcements),
 ]

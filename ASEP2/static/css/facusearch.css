@@ -1,0 +1,128 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(145deg, #263d64, #1e2f4f);
+    color: #f0f0f0;
+}
+
+.dashboard-header {
+    text-align: center;
+    padding: 30px 0;
+    background-color: #1c2e4a;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.logout-btn {
+    background: #ff4b5c;
+    padding: 8px 16px;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    margin-top: 10px;
+    display: inline-block;
+}
+
+.search-bar {
+    margin-top: 15px;
+}
+
+.search-bar input {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: none;
+    width: 250px;
+    max-width: 90%;
+}
+
+.search-bar button {
+    padding: 8px 14px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 6px;
+    margin-left: 8px;
+    cursor: pointer;
+}
+
+/* Timetable layout */
+.schedule-wrapper {
+    padding: 30px;
+    overflow-x: auto;
+}
+
+.schedule-table {
+    display: grid;
+    grid-template-columns: 100px repeat(6, 1fr);
+    gap: 10px;
+}
+
+.schedule-row {
+    display: contents;
+}
+
+.schedule-header .day,
+.schedule-header .time-slot {
+    font-weight: bold;
+    background-color: #2d4469;
+    text-align: center;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.schedule-box {
+    background-color: #3a5a89;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    font-size: 14px;
+    color: black;
+    font-weight: bold;
+}
+
+.time-slot {
+    background-color: #1f3559;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.highlight-day {
+    background-color: #ffb347 !important;
+    color: #000;
+    font-weight: bold;
+}
+
+.highlight-box {
+    border-left: 5px solid #ffa500 !important;
+    box-shadow: 0 0 10px rgba(255, 165, 0, 0.7);
+}
+
+/* Coloring based on Class Type */
+.theory-class {
+    background-color: #d4edda;
+}
+
+.lab-class {
+    background-color: #d1ecf1;
+}
+
+.tutorial-class {
+    background-color: #fff3cd;
+}
+
+.empty-class {
+    background-color: #f0f0f0;
+    color: #aaa;
+}
+
+/* Footer fix */
+footer {
+    text-align: center;
+    padding: 15px;
+    font-size: 14px;
+    background-color: #1c2e4a;
+    margin-top: auto;
+}

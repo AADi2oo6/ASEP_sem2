@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Room Timetable</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/buildingpage.css' %}">
+</head>
+<body>
+
+<header class="dashboard-header">
+  <h1>Room Timetable</h1>
+  <p>Select the building you want to explore</p>
+  {% comment %} <a href="{% url 'dashboard' %}" class="logout-btn">Back to Dashboard</a> {% endcomment %}
+</header>
+
+<section class="building-grid">
+
+  <div class="building-card">
+    <a href="/rooms">Floor-1</a>
+  </div>
+
+  <div class="building-card">
+    <a href="/rooms">Floor-2</a>
+  </div>
+
+  <div class="building-card">
+    <a href="/rooms">Floor-3</a>
+  </div>
+
+  <div class="building-card">
+    <a href="/rooms">Floor-4</a>
+  </div>
+
+</section>
+
+<footer>
+  <p>© 2025 Student Dashboard | VIT College</p>
+</footer>
+
+</body>
+</html>

@@ -5,7 +5,7 @@
 
 {% block head %}
 {% load static %}
-    <link rel="stylesheet" href="{% static 'css/faculty_dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/student_dashboard.css' %}">
 {% endblock head %}
 
 
@@ -20,40 +20,27 @@
     <div class="card">
       <h3>📅 View Schedule</h3>
       <p>See your upcoming classes and schedule.</p>
-      <a href="">Open</a>
+      <a href="/student_schedule/">Open</a>
     </div>
     
     <div class="card">
-      <h3>✅ Mark Attendance</h3>
-      <p>Take attendance for your current or past classes.</p>
-      <a href="">Open</a>
-    </div>
-  
-    <div class="card">
       <h3>🧾 Check Availability</h3>
       <p>Find out which rooms are free for extra sessions.</p>
-      <a href="">Open</a>
+      <a href="/freeclassrooms">Open</a>
     </div>
   
     <div class="card">
-      <h3>🗺️ Locate Classrooms</h3>
-      <p>Get directions to any classroom instantly.</p>
-      <a href="">Open</a>
-    </div>
-  
-    <div class="card">
-      <h3>🛠️ Manage Classes</h3>
-      <p>Create, edit, or delete your class schedules.</p>
-      <a href="">Open</a>
+      🗺️<h3>Branch Schedule </h3>
+      <p>View Schedule of any Branch you want</p>
+      <a href="/branchschedule">Open</a>
     </div>
   
     <div class="card">
       <h3>📢 Announcements</h3>
       <p>Send updates to students directly.</p>
-      <a href="">Open</a>
+      <a href="/announcements">Open</a>
     </div>
   </div>
   
   <footer>© 2025 Faculty Dashboard | VIT College</footer>
 {% endblock body %}
-  
