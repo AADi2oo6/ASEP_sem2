@@ -1,11 +1,11 @@
 {% extends "student_dashboard.html" %}
 {% block title %}
-<title>Student Dashboard</title>
+<title>Faculty Dashboard</title>
 {% endblock title %}
 
 {% block head %}
 {% load static %}
-    <link rel="stylesheet" href="{% static 'css/student_dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/faculty_dashboard.css' %}">
 {% endblock head %}
 
 
@@ -20,7 +20,7 @@
     <div class="card">
       <h3>📅 View Schedule</h3>
       <p>See your upcoming classes and schedule.</p>
-      <a href="/student_schedule/">Open</a>
+      <a href="/schedule/">Open</a>
     </div>
     
     <div class="card">

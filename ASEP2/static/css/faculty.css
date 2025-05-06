@@ -1,0 +1,111 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: #0f1e46;
+    color: white;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.header,
+.footer {
+    background-color: #0a1734;
+    padding: 40px 20px 20px;
+    text-align: center;
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.header .subtext {
+    font-size: 1rem;
+    margin-bottom: 20px;
+    color: #bbb;
+}
+
+.top-controls {
+    margin-bottom: 20px;
+}
+
+.controls {
+    margin-bottom: 30px;
+}
+
+.controls input[type="text"] {
+    padding: 10px;
+    width: 250px;
+    border: none;
+    border-radius: 5px;
+    margin: 0 10px;
+}
+
+.btn {
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 7px;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 5px;
+}
+
+.back-btn {
+    background-color: #dc3545;
+}
+
+.search-btn {
+    background-color: #28a745;
+}
+
+.card-section {
+    flex: 1;
+    background-color: #233d6d; /* lighter section */
+    padding: 40px 20px;
+}
+
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.faculty-card {
+    background-color: #162d5d;
+    border-radius: 10px;
+    padding: 20px;
+    width: 250px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.faculty-card h2 {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+}
+
+.faculty-card p {
+    color: #ccc;
+    margin-bottom: 10px;
+}
+
+.card-actions .btn {
+    margin-top: 10px;
+    display: inline-block;
+    width: 100px;
+}
+
+.footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 0.9rem;
+    color: #888;
+}

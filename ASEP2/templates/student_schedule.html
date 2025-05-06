@@ -41,8 +41,14 @@
 <body>
 
 <div class="dashboard-header">
-    <h1>📅 Student Schedule</h1>
+    <h1>📅 {{Role}} Schedule</h1>
+    {% if Role == "Student" %}
+    <h3> {{Name}}</h3>
     <h3>Branch : {{ class }}, Batch : {{ batch }}</h3>
+    {% else %}
+    <h3>{{ teachersId }} - {{ Name }}</h3>
+    {% endif %}
+    
     <p>Your class routine for the week</p>
     <a href="{% url 'login' %}" class="logout-btn">Back</a>
 </div>
