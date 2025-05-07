@@ -8,8 +8,13 @@ from login.models import login,Flogin
 
 from TimeTable.models import StudentsTT,FacultysTT
 # StudentsTT.objects.all().update(course_name= "AI")
-import os
-os.chdir("C:\\Users\\adish\\OneDrive\\Documents\\GitHub\\ASEP_sem2\\ASEP2")
+# import csv
+
+# with open('FacultyName.csv', newline='', encoding='utf-8') as f:
+#     reader = csv.DictReader(f)
+#     for row in reader:
+#         name = row['Name'].strip()
+#         Teacher_name.objects.get_or_create(name=name)
 
 
 
@@ -59,74 +64,61 @@ def logout_views(request):
     return redirect("index")  # or wherever you want to send them
 
 
-def schedule(request):
-    data ={}
-    user_data = request.session.get("user") # this will fetch all the data of user form the session 
-     
-    if request.session.get("role") == "Faculty":
-        TTd = FacultysTT.objects.filter(teachersID = user_data["teachersID"])
-        data["teachersId"]=user_data["teachersID"]      
-    else: 
-        TTd = StudentsTT.objects.filter(course_name=user_data["course_name"], div=user_data["div"])
-        data["class"] = f"{user_data['course_name']} - {user_data['div']}"
-        data["batch"] = user_data["batch"]
+def schedule(request, Name=None):
+    data = {}
+    user_data = request.session.get("user")
 
+    if Name is None: 
+        # Handle logged-in user (student or faculty)
+        if request.session.get("role") == "Faculty":
+            TTd = FacultysTT.objects.filter(teachersID=user_data["teachersID"])
+            data["teachersId"] = user_data["teachersID"]      
+        else: 
+            TTd = StudentsTT.objects.filter(course_name=user_data["course_name"], div=user_data["div"])
+            data["class"] = f"{user_data['course_name']} - {user_data['div']}"
+            data["batch"] = user_data["batch"]
+        Name = user_data["Name"]
+        role = request.session.get("role")
+    else:
+        # Handle name passed via URL (e.g., from faculty cards)
+        TTd = FacultysTT.objects.filter(teacher_name=Name)
+        role = "Faculty"
 
+    # Generate time table structure
     days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-    hours = ['8-9 AM', '9-10 AM', '10-11 AM', '11-12 PM', '12-1 PM', '1-2 PM', '2-3 PM', '3-4 PM', '4-5 PM', '5-6 PM','6-7 PM','7-8 PM']
+    hours = ['8-9 AM', '9-10 AM', '10-11 AM', '11-12 PM', '12-1 PM', '1-2 PM',
+             '2-3 PM', '3-4 PM', '4-5 PM', '5-6 PM', '6-7 PM', '7-8 PM']
 
-    dic = {}
+    dic = {day: {} for day in days}
 
-    for i in days:
-        dic[i] = {}  # Initialize empty dictionary for each day
-        
-        for x in hours:
+    for day in days:
+        for hour in hours:
             found = False
-            for j in TTd:
-                if i == j.day and x == j.time_slot:  
-                    dic[i][x] = (j.room_no, j.subject_name, j.teacher_name, j.class_type)
+            for entry in TTd:
+                if entry.day == day and entry.time_slot == hour:
+                    dic[day][hour] = (entry.room_no, entry.subject_name, entry.teacher_name, entry.class_type)
                     found = True
-                    break  # Once found, no need to check further
-
+                    break
             if not found:
-                dic[i][x] = ("", "", "", "")  # Empty values if no class
+                dic[day][hour] = ("", "", "", "")
+
     today = datetime.today().strftime("%A")
-    
-    data1 = {
-        "Name" : user_data["Name"],
-        "Role":request.session.get("role"),
+
+    data.update({
+        "Name": Name,
+        "Role": role,
         'days': days,
         'hours': hours,
         'today': today,
-        "dic":dic
+        "dic": dic
+    })
 
-    }
-    data.update(data1)
     return render(request, 'student_schedule.html', data)
 
-
-
-def faculty_timetable(request):
-    selected_faculty = request.GET.get('faculty', '')
-    timetable = {}  # Your logic to fetch timetable based on faculty
-    days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-    hours = ['8-9 AM', '9-10 AM', '10-11 AM', '11-12 PM', '12-1 PM', '1-2 PM', '2-3 PM', '3-4 PM', '4-5 PM', '5-6 PM','6-7 PM','7-8 PM']
-
-    # `timetable` should be in the format:
-    # {'Monday': {'9:00-10:00': ('RoomNo', 'Subject', 'FacultyName', 'ClassType'), ...}, ...}
-
-    return render(request, 'facusearch.html', {
-        'selected_faculty': selected_faculty,
-        'dic': timetable,
-        'days': days,
-        'hours': hours,
-        # 'today': timezone.now().strftime('%A'),
-    })
-def timeTalbe(request):
-
-    
+def timeTalbePage(request):
     fdata = Flogin.objects.all()
     return render(request, "FacultyTimetable.html", {"Names": fdata})  # Pass Names to the template
+
 
 
 
