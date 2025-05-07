@@ -8,9 +8,9 @@ from login.models import login,Flogin
 
 from TimeTable.models import StudentsTT,FacultysTT
 # StudentsTT.objects.all().update(course_name= "AI")
-import csv
 import os
 os.chdir("C:\\Users\\adish\\OneDrive\\Documents\\GitHub\\ASEP_sem2\\ASEP2")
+
 
 
 def index(request):
@@ -123,11 +123,10 @@ def faculty_timetable(request):
         # 'today': timezone.now().strftime('%A'),
     })
 def timeTalbe(request):
-    with open("FacultyName.csv",'r') as f:
-        Names = [line.strip() for line in f.readlines()]  # Strip newline characters
-        Names.remove("Name")
+
     
-    return render(request, "FacultyTimetable.html", {"Names": Names})  # Pass Names to the template
+    fdata = Flogin.objects.all()
+    return render(request, "FacultyTimetable.html", {"Names": fdata})  # Pass Names to the template
 
 
 
