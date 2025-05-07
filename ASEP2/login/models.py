@@ -21,8 +21,14 @@ class login(models.Model):
     batch = models.CharField(max_length=1,choices=BATCH_CHOICE, default=None,null = True)
 
 class Flogin(models.Model):
+    RANK_CHOICES = {
+        ("Professor","Professor"),
+        ("Assistant Professor","Assistant Professor")
+    }
     teachersID = models.IntegerField(default=00000)
-    Name = models.CharField(max_length=40,default=None,null = True)
-    userName = models.EmailField()
-    Password = models.CharField(max_length=10)
+    dept = models.CharField(max_length=50,default=None,null = True)
+    Name = models.CharField(max_length=50,default=None,null = True)
+    rank = models.CharField(max_length=50, default=None, null=True, choices=RANK_CHOICES)
+    userName = models.EmailField(default="xyz@vit.edu")
+    Password = models.CharField(max_length=10, default="vitpune")
 

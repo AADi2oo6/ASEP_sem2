@@ -6,5 +6,5 @@ class loginAdmin(admin.ModelAdmin):
 admin.site.register(login,loginAdmin)
 
 class FloginAdmin(admin.ModelAdmin):
-    list_display = ["id","teachersID","Name","userName","Password"]
+    list_display = ["id","teachersID","rank","dept","Name","userName","Password"]
 admin.site.register(Flogin,FloginAdmin)
