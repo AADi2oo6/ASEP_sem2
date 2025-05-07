@@ -58,7 +58,9 @@ class StudentsTT(models.Model):
 
     def __str__(self):
         return f"{self.course_name} - {self.subject_name} ({self.day} {self.time_slot})"
-    
+
+from login.models import Flogin
+
 class FacultysTT(models.Model):
     DAYS_CHOICES = [
         ("Monday", "Monday"),
@@ -104,7 +106,7 @@ class FacultysTT(models.Model):
     }
 
     teachersID = models.IntegerField(default=00000)
-    teacher_name = models.CharField(max_length=100,default="Na",null=True)
+    teacher_name = models.ForeignKey(Flogin, on_delete=models.SET_NULL, null=True, related_name="timetable_entries")
     day = models.CharField(max_length=10, choices=DAYS_CHOICES)
     time_slot = models.CharField(max_length=10, choices=TIME_SLOT_CHOICES)
     room_no = models.CharField(max_length=10)

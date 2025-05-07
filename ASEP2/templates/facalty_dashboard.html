@@ -11,7 +11,12 @@
 
 {% block body %}
 <div class="dashboard-header">
-    <h1>Welcome, Prof. {{ name }}</h1>
+  {% if name|slice:":5" == "Prof." %}
+  <h1>Welcome, Prof.{{ name|slice:"5:" }}</h1>
+{% else %}
+  <h1>Welcome,  Prof. {{ name }}</h1>
+{% endif %}
+
     <p>Your personalized faculty dashboard</p>
     <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
 </div>

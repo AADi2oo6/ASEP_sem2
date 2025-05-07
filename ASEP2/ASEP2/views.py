@@ -64,24 +64,24 @@ def logout_views(request):
     return redirect("index")  # or wherever you want to send them
 
 
-def schedule(request, Name=None):
+def schedule(request,Name=None):
     data = {}
     user_data = request.session.get("user")
 
     if Name is None: 
         # Handle logged-in user (student or faculty)
         if request.session.get("role") == "Faculty":
-            TTd = FacultysTT.objects.filter(teachersID=user_data["teachersID"])
+            TTd = FacultysTT.objects.filter(teacher_name__Name=request.session.get("Name"))
             data["teachersId"] = user_data["teachersID"]      
         else: 
-            TTd = StudentsTT.objects.filter(course_name=user_data["course_name"], div=user_data["div"])
+            TTd = StudentsTT.objects.filter(course_name=user_data["course_name"], div=user_data["div"] )
             data["class"] = f"{user_data['course_name']} - {user_data['div']}"
             data["batch"] = user_data["batch"]
         Name = user_data["Name"]
         role = request.session.get("role")
     else:
         # Handle name passed via URL (e.g., from faculty cards)
-        TTd = FacultysTT.objects.filter(teacher_name=Name)
+        TTd = FacultysTT.objects.filter(teacher_name__Name=Name)
         role = "Faculty"
 
     # Generate time table structure

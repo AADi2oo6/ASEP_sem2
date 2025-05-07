@@ -32,3 +32,6 @@ class Flogin(models.Model):
     userName = models.EmailField(default="xyz@vit.edu")
     Password = models.CharField(max_length=10, default="vitpune")
 
+    def __str__(self):
+        return self.Name
+
