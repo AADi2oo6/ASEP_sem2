@@ -44,12 +44,12 @@ header p {
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  /* transition: transform 0.3s ease; */
+  transition: transform 0.3s ease;
 }
 
-/* .card:hover {
+.card:hover {
   transform: translateY(-5px);
-} */
+}
 
 .card h3 {
   margin-bottom: 0.5rem;
@@ -238,4 +238,3 @@ button:hover {
   border-radius: 6px;
   background-color: #fffde7;
 }
-
