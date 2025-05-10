@@ -131,3 +131,81 @@ footer {
   font-weight: bold;
   cursor: pointer;
 }
+@media (max-width: 768px) {
+  header h1 {
+    font-size: 1.8rem;
+  }
+
+  .search-bar input {
+    width: 90%;
+  }
+
+  .card-container {
+    justify-content: center;
+  }
+
+  .room-card {
+    width: 100%;
+    max-width: 300px;
+    font-size: 0.9rem;
+  }
+
+  .room-card h3 {
+    font-size: 1.1rem;
+  }
+
+  .card-actions .btn {
+    font-size: 0.85rem;
+    padding: 8px;
+  }
+
+  .building-title {
+    font-size: 1.4rem;
+  }
+
+  .back-btn,
+  .toggle-btn {
+    font-size: 0.9rem;
+    padding: 8px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .room-card {
+    max-width: 100%;
+    font-size: 0.85rem;
+  }
+
+  .search-bar input {
+    font-size: 0.9rem;
+    padding: 8px;
+  }
+
+  .card-actions .btn {
+    font-size: 0.8rem;
+    padding: 6px;
+  }
+
+  .toggle-btn {
+    width: 90%;
+    margin: 10px auto;
+    display: block;
+  }
+}
+
+.hidden-card {
+  display: none;
+}
+
+.toggle-card-btn {
+  text-align: center;
+  margin-top: 10px;
+}
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

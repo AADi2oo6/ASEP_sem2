@@ -5,166 +5,119 @@
   <meta charset="UTF-8">
   <title>Live Room Status</title>
   <link rel="stylesheet" href="{% static 'css/buildingpage.css' %}">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
   <div class="container">
     <header>
       <h1>🏫 College Room Timetables</h1>
       <p>Live status of all rooms — find free ones or locate a teacher</p>
-      <a href="" class="btn back-btn">Back</a>
-
+      <a href="javascript:history.back()" class="btn back-btn">Back</a>
       <div class="search-bar">
         <input type="text" id="searchInput" placeholder="Search by Room No or Teacher Name..." onkeyup="filterRooms()">
       </div>
     </header>
+
     <div class="filter-controls">
-  <button class="btn toggle-btn" onclick="toggleVacantOnly()">Show Only Empty Classrooms</button>
-</div>
-{% for building, rooms in room_data.items %}
+      <button class="btn toggle-btn" onclick="toggleVacantOnly()">Show Only Empty Classrooms</button>
+    </div>
+
+    {% for building, rooms in room_data.items %}
       <h2 class="building-title">{{ building }}</h2>
-      <div class="card-container">
-        {% for room in rooms %}
-        <div class="room-card {{room.status}} ">
-          <h3>Room {{ room.number }}</h3>
-          <p><strong>Type:</strong> {{ room.type }}</p>
-          <p><strong>Class:</strong> {{ room.class }}</p>
-          <p><strong>Teacher:</strong>{{ room.teacher }}</p>
-          <div class="card-actions">
-            <a href="" class="btn">View</a>
-            {% comment %} <a href="" class="btn download">Download</a> {% endcomment %}
-          </div>
+      <div class="card-container" id="building-{{ forloop.counter }}">
+      {% for room in rooms %}
+        <div class="room-card {{ room.status }} {% if forloop.counter > 6 %}hidden-card{% endif %}" 
+           data-room="{{ room.number }}" data-teacher="{{ room.teacher }}">
+        <h3>Room {{ room.number }}</h3>
+        <p><strong>Type:</strong> {{ room.type }}</p>
+        <p><strong>Class:</strong> {{ room.class }}</p>
+        <p><strong>Teacher:</strong> {{ room.teacher }}</p>
+        <div class="card-actions">
+          <a href="#" class="btn">View</a>
         </div>
-        {% endfor %}
+        </div>
+      {% endfor %}
       </div>
-    {% endfor %}
 
-    {% comment %} <h2 class="building-title">DESH</h2>
-<div class="card-container">
-  <div class="room-card vacant" data-room="1201" data-teacher="">
-    <h3>Room 1201</h3>
-    <p><strong>Type:</strong> Classroom</p>
-    <p><strong>Capacity:</strong> 60</p>
-    <div class="card-actions">
-      <a href="#" class="btn">View</a>
-      <a href="#" class="btn download">Download</a>
-    </div>
-  </div>
-  <div class="room-card" data-room="1202" data-teacher="Dr. Mehta">
-    <h3>Room 1202</h3>
-    <p><strong>Type:</strong> Lab</p>
-    <p><strong>Capacity:</strong> 30</p>
-    <div class="card-actions">
-      <a href="#" class="btn">View</a>
-      <a href="#" class="btn download">Download</a>
-    </div>
-  </div>
-  <!-- Add 3 more similarly -->
-</div>
-
-<h2 class="building-title">AIDS</h2>
-<div class="card-container">
-  <div class="room-card vacant" data-room="2201" data-teacher="">
-    <h3>Room 2201</h3>
-    <p><strong>Type:</strong> Classroom</p>
-    <p><strong>Capacity:</strong> 50</p>
-    <div class="card-actions">
-      <a href="#" class="btn">View</a>
-      <a href="#" class="btn download">Download</a>
-    </div>
-  </div>
-  <div class="room-card" data-room="2202" data-teacher="Prof. Sharma">
-    <h3>Room 2202</h3>
-    <p><strong>Type:</strong> Lab</p>
-    <p><strong>Capacity:</strong> 25</p>
-    <p><strong>Teacher:</strong> Prof. Sharma</p>
-    <div class="card-actions">
-      <a href="#" class="btn">View</a>
-      <a href="#" class="btn download">Download</a>
-    </div>
-  </div>
-</div>
-
-<h2 class="building-title">MECHANICAL</h2>
-<div class="card-container">
-  <div class="room-card" data-room="3201" data-teacher="Dr. Patel">
-    <h3>Room 3201</h3>
-    <p><strong>Type:</strong> Workshop</p>
-    <p><strong>Capacity:</strong> 40</p>
-    <p><strong>Teacher:</strong> Dr. Patel</p>
-    <div class="card-actions">
-      <a href="#" class="btn">View</a>
-      <a href="#" class="btn download">Download</a>
-    </div>
-  </div>
-  <div class="room-card vacant" data-room="3202" data-teacher="">
-    <h3>Room 3202</h3>
-    <p><strong>Type:</strong> Classroom</p>
-    <p><strong>Capacity:</strong> 60</p>
-    <div class="card-actions">
-      <a href="#" class="btn">View</a>
-      <a href="#" class="btn download">Download</a>
-    </div>
-  </div>
-</div>
-
-<h2 class="building-title">INSTRUMENTATION</h2>
-<div class="card-container">
-  <div class="room-card vacant" data-room="4201" data-teacher="">
-    <h3>Room 4201</h3>
-    <p><strong>Type:</strong> Lab</p>
-    <p><strong>Capacity:</strong> 20</p>
-    <div class="card-actions">
-      <a href="#" class="btn">View</a>
-      <a href="#" class="btn download">Download</a>
-    </div>
-  </div>
-  <div class="room-card" data-room="4202" data-teacher="Ms. Rina">
-    <h3>Room 4202</h3>
-    <p><strong>Type:</strong> Classroom</p>
-    <p><strong>Capacity:</strong> 55</p>
-    <p><strong>Teacher:</strong> Ms. Rina</p>
-    <div class="card-actions">
-      <a href="#" class="btn">View</a>
-      <a href="#" class="btn download">Download</a>
-    </div>
-  </div>
-</div> {% endcomment %}
-
-
+      <!-- Toggle Button -->
+      <div class="toggle-card-btn">
+      <button class="btn show-more-btn" onclick="toggleBuilding({{ forloop.counter }})">Show More</button>
+      </div>
+      {% endfor %}
+      
+      
+      
+      
+      <p id="noResultsMessage" style="display:none; text-align:center; color:#ccc; margin-top:20px;">
+        🚫 No matching rooms found.
+      </p>
     <footer>© 2025 VIT College | Live Room Dashboard</footer>
   </div>
 
-  <script>
-    function filterRooms() {
-      const input = document.getElementById("searchInput").value.toLowerCase();
-      const cards = document.querySelectorAll('.room-card');
-
-      cards.forEach(card => {
-        const room = card.getAttribute('data-room').toLowerCase();
-        const teacher = card.getAttribute('data-teacher').toLowerCase();
-        const match = room.includes(input) || teacher.includes(input);
-        card.style.display = match ? 'block' : 'none';
-      });
-    }
-  </script>
-  <script>
+<script>
+  // Declare globally to persist state
   let showingVacantOnly = false;
 
+  function filterRooms() {
+    const input = document.getElementById("searchInput").value.toLowerCase();
+    const cards = document.querySelectorAll('.room-card');
+    let anyVisible = false;
+
+    cards.forEach(card => {
+      const room = card.getAttribute('data-room')?.toLowerCase() || '';
+      const teacher = card.getAttribute('data-teacher')?.toLowerCase() || '';
+      const match = room.includes(input) || teacher.includes(input);
+
+      card.style.display = match ? "block" : "none";
+      if (match) anyVisible = true;
+    });
+
+    document.getElementById("noResultsMessage").style.display = anyVisible ? "none" : "block";
+  }
+
   function toggleVacantOnly() {
+    // Reset search
+    document.getElementById("searchInput").value = "";
     const cards = document.querySelectorAll('.room-card');
     const toggleBtn = document.querySelector('.toggle-btn');
+    let anyVisible = false;
+
     showingVacantOnly = !showingVacantOnly;
 
     cards.forEach(card => {
       const isVacant = card.classList.contains('vacant');
-      card.style.display = showingVacantOnly ? (isVacant ? 'block' : 'none') : 'block';
+      const show = showingVacantOnly ? isVacant : true;
+      card.style.display = show ? "block" : "none";
+      if (show) anyVisible = true;
     });
 
     toggleBtn.textContent = showingVacantOnly
       ? "Show All Classrooms"
       : "Show Only Empty Classrooms";
+
+    document.getElementById("noResultsMessage").style.display = anyVisible ? "none" : "block";
+  }
+
+  function toggleBuilding(id) {
+    const container = document.getElementById(`building-${id}`);
+    const hiddenCards = container.querySelectorAll('.hidden-card');
+    const button = container.nextElementSibling.querySelector('.show-more-btn');
+    const isHidden = hiddenCards.length > 0 && (hiddenCards[0].style.display === "none" || hiddenCards[0].style.display === "");
+
+    hiddenCards.forEach(card => {
+      if (isHidden) {
+        card.style.display = "block";
+        card.classList.add("fade-in");
+        setTimeout(() => card.classList.remove("fade-in"), 400);
+      } else {
+        card.style.display = "none";
+      }
+    });
+
+    button.textContent = isHidden ? "Show Less" : "Show More";
   }
 </script>
+
 
 </body>
 </html>
