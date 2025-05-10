@@ -50,7 +50,7 @@
     {% endif %}
     
     <p>Your class routine for the week</p>
-    <a href="{% url 'login' %}" class="logout-btn">Back</a>
+    <a href="javascript:history.back()" class="logout-btn">Back</a>
 </div>
 
 <div class="schedule-wrapper">
@@ -78,11 +78,11 @@
                                     {% elif class_details.3 == 'Tutorial' %} tutorial-class
                                     {% endif %}">
                                     <h4>Room No: {{ class_details.0 }}</h4>
+                                    <p>{{ class_details.4 }} {{ class_details.5}}</p>
                                     <p>{{ class_details.1 }}</p>
-                                    
+                                    {% if Role == "Student" %}
                                     <p>  {{ class_details.2 }}</p>
-                                    
-
+                                    {% endif %}
                                     <p><em>{{ class_details.3 }}</em></p>
                                 </div>
                             {% else %}

@@ -96,7 +96,7 @@ def schedule(request,Name=None):
             found = False
             for entry in TTd:
                 if entry.day == day and entry.time_slot == hour:
-                    dic[day][hour] = (entry.room_no, entry.subject_name, entry.teacher_name, entry.class_type)
+                    dic[day][hour] = (entry.room_no, entry.subject_name, entry.teacher_name, entry.class_type,entry.course_name,entry.div)
                     found = True
                     break
             if not found:
@@ -121,9 +121,63 @@ def timeTalbePage(request):
 
 
 
-
 def buildingpage(request):
-  return render(request, 'buildingpage.html')
+    # Get all unique room numbers
+    TTd = FacultysTT.objects.all()
+    roomNO = TTd.values_list('room_no', flat=True).distinct()
+
+    # Get current day and current time slot
+    now = datetime.now()
+    current_day = now.strftime("%A")
+
+    # Mapping current hour to time slot
+    hour_map = {
+        8: '8-9 AM', 9: '9-10 AM', 10: '10-11 AM', 11: '11-12 PM',
+        12: '12-1 PM', 13: '1-2 PM', 14: '2-3 PM', 15: '3-4 PM',
+        16: '4-5 PM', 17: '5-6 PM'
+    }
+    current_hour = now.hour
+    current_slot = hour_map.get(current_hour, None)
+
+    room_data = {
+        "Building 1 : DESH": [],
+        "Building 2 : AIDS": [],
+        "Building 3 : MECHANICAL": [],
+        "Building 4 : INSTRUMENTATION": []
+    }
+
+    for room in roomNO:
+        # Default values
+        room_info = {
+            "number": room,
+            "type": "Classroom",  # Default, can adjust based on room naming if needed
+            "class": "", 
+            "teacher": "", 
+            "status": "vacant"
+        }
+
+        if current_slot:
+            scheduled = TTd.filter(room_no=room, day=current_day, time_slot=current_slot).first()
+            if scheduled:
+                room_info["class"] = scheduled.subject_name
+                room_info["teacher"] = scheduled.teacher_name
+                room_info["status"] = ""
+
+        # Assign building
+        if room.startswith("1"):
+            room_info["type"] = "Classroom"
+            room_data["Building 1 : DESH"].append(room_info)
+        elif room.startswith("2"):
+            room_info["type"] = "Lab"
+            room_data["Building 2 : AIDS"].append(room_info)
+        elif room.startswith("3"):
+            room_info["type"] = "Workshop"
+            room_data["Building 3 : MECHANICAL"].append(room_info)
+        elif room.startswith("4"):
+            room_info["type"] = "Classroom"
+            room_data["Building 4 : INSTRUMENTATION"].append(room_info)
+
+    return render(request, 'buildingpage.html', {'room_data': room_data})
 
 def rooms(request):
     rooms = range(1, 31)  # Create list of room numbers 1 to 30
