@@ -62,6 +62,8 @@ header p {
 }
 
 .room-card h3 {
+  margin-top:1px;
+  text-align: center;
   margin-bottom: 8px;
   font-size: 1rem;
 }
@@ -77,7 +79,7 @@ header p {
 
 .card-actions .btn {
   display: block;
-  width: 100%;
+  width: 99%;
   text-align: center;
   margin-top: 5px;
   font-size: 0.8rem;
@@ -145,7 +147,7 @@ footer {
   }
 
   .room-card {
-    width: 100%;
+    width: 70%;
     max-width: 300px;
     font-size: 0.9rem;
   }

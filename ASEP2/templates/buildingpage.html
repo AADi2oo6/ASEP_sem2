@@ -28,10 +28,11 @@
       {% for room in rooms %}
         <div class="room-card {{ room.status }} {% if forloop.counter > 6 %}hidden-card{% endif %}" 
            data-room="{{ room.number }}" data-teacher="{{ room.teacher }}">
-        <h3>Room {{ room.number }}</h3>
+        <h3>Room: {{ room.number }}</h3>
         <p><strong>Type:</strong> {{ room.type }}</p>
-        <p><strong>Class:</strong> {{ room.class }}</p>
         <p><strong>Teacher:</strong> {{ room.teacher }}</p>
+        <p><strong>Subject:</strong> {{ room.subject }}</p>
+        <p><strong>Class:</strong> {{ room.class }}</p>
         <div class="card-actions">
           <a href="#" class="btn">View</a>
         </div>

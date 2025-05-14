@@ -152,15 +152,17 @@ def buildingpage(request):
             "number": room,
             "type": "Classroom",  # Default, can adjust based on room naming if needed
             "class": "", 
-            "teacher": "", 
+            "teacher": "",
+            "subject":"", 
             "status": "vacant"
         }
 
         if current_slot:
             scheduled = TTd.filter(room_no=room, day=current_day, time_slot=current_slot).first()
             if scheduled:
-                room_info["class"] = scheduled.subject_name
+                room_info["class"] = f"{scheduled.course_name} ({scheduled.div}) , Batch : {scheduled.batch}"
                 room_info["teacher"] = scheduled.teacher_name
+                room_info["subject"] = f"{scheduled.subject_name} ({scheduled.class_type})"
                 room_info["status"] = ""
 
         # Assign building
