@@ -74,6 +74,7 @@ def schedule(request,Name=None):
             TTd = FacultysTT.objects.filter(teacher_name__Name=request.session.get("Name"))
             data["teachersId"] = user_data["teachersID"]      
         else: 
+            # TTd = FacultysTT.objects.filter(course_name=user_data["course_name"], div=user_data["div"] )
             TTd = StudentsTT.objects.filter(course_name=user_data["course_name"], div=user_data["div"] )
             data["class"] = f"{user_data['course_name']} - {user_data['div']}"
             data["batch"] = user_data["batch"]

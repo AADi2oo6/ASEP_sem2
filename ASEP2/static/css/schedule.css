@@ -106,3 +106,137 @@ footer {
     background-color: #f0f0f0; /* Light gray */
     color: #aaa;
 }
+.edit-popup {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.edit-popup-content {
+    background: #fff;
+    padding: 25px 30px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 400px;
+    color: #000;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.edit-popup-content h3 {
+    margin-top: 0;
+    text-align: center;
+}
+
+.edit-popup-content label {
+    display: block;
+    margin-top: 0px;
+    font-weight: 600;
+}
+
+.edit-popup-content input,
+.edit-popup-content select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.edit-popup-content button {
+    background: #4caf50;
+    color: white;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-btn {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #444;
+}
+
+.edit-btn {
+    background-color: #ffc107;
+    color: #000;
+    padding: 4px 10px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    margin-bottom: 6px;
+    cursor: pointer;
+}
+
+.edit-popup {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background-color: rgba(0,0,0,0.7);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.edit-popup-content {
+  background-color: #1c2e4a;
+  color: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  position: relative;
+}
+
+.edit-popup-content input,
+.edit-popup-content select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  border: none;
+  font-size: 14px;
+}
+
+.flex-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.flex-row p, .flex-row div {
+  flex: 1;
+}
+
+.btn.form-submit-btn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 6px;
+  font-weight: bold;
+  border: none;
+  width: 100%;
+}
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 20px;
+  color: #fff;
+  cursor: pointer;
+}
