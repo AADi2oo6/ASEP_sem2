@@ -122,3 +122,73 @@ class FacultysTT(models.Model):
     def __str__(self):
         return f"{self.course_name} - {self.subject_name} ({self.day} {self.time_slot})"
 
+
+class TempFacultysTT(models.Model):
+    DAY_CHOICES = [
+        ('Monday', 'Monday'),
+        ('Tuesday', 'Tuesday'),
+        ('Wednesday', 'Wednesday'),
+        ('Thursday', 'Thursday'),
+        ('Friday', 'Friday'),
+        ('Saturday', 'Saturday'),
+    ]
+
+    TIME_SLOTS = [
+        ('8-9 AM', '8-9 AM'),
+        ('9-10 AM', '9-10 AM'),
+        ('10-11 AM', '10-11 AM'),
+        ('11-12 PM', '11-12 PM'),
+        ('12-1 PM', '12-1 PM'),
+        ('1-2 PM', '1-2 PM'),
+        ('2-3 PM', '2-3 PM'),
+        ('3-4 PM', '3-4 PM'),
+        ('4-5 PM', '4-5 PM'),
+        ('5-6 PM', '5-6 PM'),
+        ('6-7 PM', '6-7 PM'),
+        ('7-8 PM', '7-8 PM'),
+    ]
+
+    CLASS_TYPE_CHOICES = [
+        ('Theory', 'Theory'),
+        ('Lab', 'Lab'),
+        ('Tutorial', 'Tutorial'),
+    ]
+
+    day = models.CharField(max_length=10, choices=DAY_CHOICES)
+    time_slot = models.CharField(max_length=20, choices=TIME_SLOTS)
+    room_no = models.CharField(max_length=10)
+    subject_name = models.CharField(max_length=100)
+    teacher_name = models.CharField(max_length=100)
+    class_type = models.CharField(max_length=10, choices=CLASS_TYPE_CHOICES)
+    course_name = models.CharField(max_length=50)
+    division = models.CharField(max_length=10)
+    start_date = models.DateField()
+    end_date = models.DateField()
+
+    # List of identifier names:
+    # [
+    #     "day",
+    #     "time_slot",
+    #     "room_no",
+    #     "subject_name",
+    #     "teacher_name",
+    #     "class_type",
+    #     "course_name",
+    #     "division",
+    #     "start_date",
+    #     "end_date"
+    # ]
+
+    def __str__(self):
+        return f"{self.teacher_name} - {self.day} {self.time_slot} ({self.start_date} to {self.end_date})"
+    
+class CanceledClass(models.Model):
+    teacher_name = models.ForeignKey(Flogin, on_delete=models.CASCADE)
+    day = models.CharField(max_length=20)              # e.g., 'Monday'
+    time_slot = models.CharField(max_length=20)        # e.g., '9-10 AM'
+    start_date = models.DateField()
+    end_date = models.DateField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.teacher.Name} | {self.day} {self.time_slot} | {self.start_date} to {self.end_date}"

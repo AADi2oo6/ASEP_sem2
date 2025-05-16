@@ -60,6 +60,30 @@
         margin-bottom: 5px;
         display: block;
         }
+        .btn-group {
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+        }
+
+        
+        .cancel-btn {
+        background-color: #ff4b5c;
+        color: white;
+        padding: 4px 10px;
+        border: none;
+        border-radius: 5px;
+        font-weight: bold;
+        margin-left: 6px;
+        cursor: pointer;
+        }
+
+        .cancel-btn-confirm {
+        background-color: #d32f2f;
+        color: white;
+        margin-top: 10px;
+        }
+
 
         
     </style>
@@ -110,9 +134,12 @@
                                     <p>  {{ class_details.2 }}</p>
                                     {% endif %}
                                     <p><em>{{ class_details.3 }}</em></p>
-                                    {% if Role == "Faculty" %}
+                                   {% if Role == "Faculty" %}
                                     <button class="edit-btn" onclick="openEditPopup('{{day}}', '{{hour}}')">✏️ Edit</button>
+                                    <button class="cancel-btn" onclick="openCancelPopup('{{day}}', '{{hour}}')">❌ Cancel</button>
                                     {% endif %}
+
+
                                 </div>
                            {% else %}
                             <div class="schedule-box empty-class {% if day == today %}highlight-box{% endif %}">
@@ -203,7 +230,38 @@
 <button type="submit" class="btn form-submit-btn">Save Schedule</button>
 
     </form>
-  </div>
+    
+</div>
+</div>
+<div id="cancelPopup" class="edit-popup">
+<div class="edit-popup-content themed-popup">
+    <span class="close-btn" onclick="closeCancelPopup()">&times;</span>
+    <h3>Cancel Class</h3>
+    <form method="post" action="/cancel_class/">
+    {% csrf_token %}
+
+    <div class="flex-row">
+        <p><strong>Day:</strong> <span id="cancel-day-display"></span></p>
+        <p><strong>Time Slot:</strong> <span id="cancel-time-display"></span></p>
+    </div>
+
+    <input type="hidden" name="day" id="cancel-day">
+    <input type="hidden" name="time_slot" id="cancel-time">
+
+    <div class="flex-row">
+        <div>
+        <label>Start Date:</label>
+        <input type="date" name="start_date" required>
+        </div>
+        <div>
+        <label>End Date:</label>
+        <input type="date" name="end_date" required>
+        </div>
+    </div>
+
+    <button type="submit" class="btn form-submit-btn cancel-btn-confirm">Confirm Cancellation</button>
+    </form>
+</div>
 </div>
 
 
@@ -241,6 +299,51 @@
     const isChecked = document.getElementById("isTemporary").checked;
     document.getElementById("dateRangeFields").style.display = isChecked ? "flex" : "none";
   }
+
+
+
+  function openCancelPopup(day, time) {
+    document.getElementById("cancelPopup").style.display = "flex";
+    document.getElementById("cancel-day").value = day;
+    document.getElementById("cancel-time").value = time;
+    document.getElementById("cancel-day-display").innerText = day;
+    document.getElementById("cancel-time-display").innerText = time;
+  }
+
+  function closeCancelPopup() {
+    document.getElementById("cancelPopup").style.display = "none";
+  }
+
+
+
+
+
+
+
+  function cancelClass(day, time) {
+  if (confirm(`Are you sure you want to cancel the class on ${day} at ${time}?`)) {
+    fetch("/cancel_schedule/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": '{{ csrf_token }}'
+      },
+      body: JSON.stringify({
+        day: day,
+        time_slot: time
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        alert("Class cancelled.");
+        window.location.reload();
+      } else {
+        alert("Failed to cancel the class.");
+      }
+    });
+  }
+}
 </script>
 
 

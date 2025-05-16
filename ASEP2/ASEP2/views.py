@@ -3,10 +3,11 @@ from django.shortcuts import render,redirect
 from django.http import HttpResponse , HttpResponseRedirect
 from django.contrib import messages #for Alert messages
 from django.forms.models import model_to_dict # using this to access the whole data of user in one go in form of dicet
+from django.utils.dateparse import parse_date
 
 from login.models import login,Flogin
 
-from TimeTable.models import StudentsTT,FacultysTT
+from TimeTable.models import StudentsTT,FacultysTT,TempFacultysTT
 # StudentsTT.objects.all().update(course_name= "AI")
 # import csv
 
@@ -115,6 +116,60 @@ def schedule(request,Name=None):
     })
 
     return render(request, 'student_schedule.html', data)
+
+from datetime import datetime
+
+def update_schedule(request):
+    if request.method == "POST":
+        day = request.POST.get("day")
+        time_slot = request.POST.get("time_slot")
+        class_name = request.POST.get("class_name")
+        division = request.POST.get("division")
+        room_no = request.POST.get("room_no")
+        class_type = request.POST.get("class_type")
+        submit_type = request.POST.get("submit_type")
+
+        # Assume teacher info is in session
+        user = request.session.get("user")
+        teacher_name = user["Name"]
+        course_name = class_name
+
+        if submit_type == "temporary":
+            # Parse dates
+            start_date = parse_date(request.POST.get("start_date"))
+            end_date = parse_date(request.POST.get("end_date"))
+
+            TempFacultysTT.objects.create(
+                day=day,
+                time_slot=time_slot,
+                room_no=room_no,
+                subject_name=class_name,
+                teacher_name=teacher_name,
+                class_type=class_type,
+                course_name=course_name,
+                division=division,
+                start_date=start_date,
+                end_date=end_date
+            )
+        else:
+            # Save to permanent table
+            obj, created = FacultysTT.objects.update_or_create(
+                day=day,
+                time_slot=time_slot,
+                teacher_name = Flogin.objects.get(Name=user["Name"]),
+                defaults={
+                    'room_no': room_no,
+                    'subject_name': class_name,
+                    'class_type': class_type,
+                    'course_name': course_name,
+                    'div': division
+                }
+            )
+
+        return redirect('http://127.0.0.1:8000/schedule/')  # Change to your correct schedule view name
+
+    return redirect('http://127.0.0.1:8000/schedule/')  # fallback
+
 
 def timeTalbePage(request):
     fdata = Flogin.objects.all()

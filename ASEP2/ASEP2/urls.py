@@ -35,6 +35,7 @@ urlpatterns = [
     path("faculty_timetable",views.timeTalbePage),
     path("branchschedule",views.branchschedule),
     path("announcements",views.announcements),
+    path("update_schedule/",views.update_schedule)
 ]
 
 if settings.DEBUG:
