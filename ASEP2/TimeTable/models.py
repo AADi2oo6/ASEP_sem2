@@ -181,7 +181,7 @@ class TempFacultysTT(models.Model):
 
     def __str__(self):
         return f"{self.teacher_name} - {self.day} {self.time_slot} ({self.start_date} to {self.end_date})"
-    
+      
 class CanceledClass(models.Model):
     teacher_name = models.ForeignKey(Flogin, on_delete=models.CASCADE)
     day = models.CharField(max_length=20)              # e.g., 'Monday'

@@ -66,8 +66,8 @@ def schedule(request,Name=None):
             TTd = FacultysTT.objects.filter(teacher_name__Name=request.session.get("Name"))
             data["teachersId"] = user_data["teachersID"]      
         else: 
-            # TTd = FacultysTT.objects.filter(course_name=user_data["course_name"], div=user_data["div"] )
-            TTd = StudentsTT.objects.filter(course_name=user_data["course_name"], div=user_data["div"] )
+            TTd = FacultysTT.objects.filter(course_name=user_data["course_name"], div=user_data["div"] )
+            # TTd = StudentsTT.objects.filter(course_name=user_data["course_name"], div=user_data["div"] )
             data["class"] = f"{user_data['course_name']} - {user_data['div']}"
             data["batch"] = user_data["batch"]
         Name = user_data["Name"]
@@ -75,7 +75,7 @@ def schedule(request,Name=None):
     else:
         # Handle name passed via URL (e.g., from faculty cards)
         TTd = FacultysTT.objects.filter(teacher_name__Name=Name)
-        role = "Faculty"
+        role = Name    
 
     # Generate time table structure
     days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
@@ -115,15 +115,17 @@ def update_schedule(request):
         day = request.POST.get("day")
         time_slot = request.POST.get("time_slot")
         class_name = request.POST.get("class_name")
+        subject_name = request.POST.get("subject_name")
         division = request.POST.get("division")
         room_no = request.POST.get("room_no")
         class_type = request.POST.get("class_type")
         submit_type = request.POST.get("submit_type")
+        year = request.POST.get("year")
+        batch = request.POST.get("batch")
 
         # Assume teacher info is in session
         user = request.session.get("user")
         teacher_name = user["Name"]
-        course_name = class_name
 
         if submit_type == "temporary":
             # Parse dates
@@ -131,16 +133,19 @@ def update_schedule(request):
             end_date = parse_date(request.POST.get("end_date"))
 
             TempFacultysTT.objects.create(
+                teachersID= user["teachersID"],
+                year = year,
                 day=day,
                 time_slot=time_slot,
                 room_no=room_no,
                 subject_name=class_name,
                 teacher_name=teacher_name,
                 class_type=class_type,
-                course_name=course_name,
+                course_name=class_name,
                 division=division,
                 start_date=start_date,
-                end_date=end_date
+                end_date=end_date,
+                batch = batch
             )
         else:
             # Save to permanent table
@@ -150,10 +155,14 @@ def update_schedule(request):
                 teacher_name = Flogin.objects.get(Name=user["Name"]),
                 defaults={
                     'room_no': room_no,
-                    'subject_name': class_name,
+                    'subject_name': subject_name,
                     'class_type': class_type,
-                    'course_name': course_name,
-                    'div': division
+                    'course_name': class_name,
+                    'div': division,
+                    "teachersID":user["teachersID"],
+                    "year":year,
+                    "batch":batch
+
                 }
             )
 

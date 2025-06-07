@@ -171,98 +171,89 @@
       <input type="hidden" name="day" id="popup-day">
       <input type="hidden" name="time_slot" id="popup-time">
 
+      <!-- First Row -->
       <div class="flex-row">
-  <div>
-    <label>Class Name:</label>
-    <select name="class_name" required>
-      <option value="">Select Class</option>
-      <option value="AIML">AIML</option>
-      <option value="CS">CS</option>
-      <option value="Mechanical">Mechanical</option>
-      <option value="Instrumentation">Instrumentation</option>
-    </select>
-  </div>
-  <div>
-    <label>Division:</label>
-    <select name="division" required>
-      <option value="">Select Division</option>
-      <option>A</option>
-      <option>B</option>
-      <option>C</option>
-      <option>D</option>
-      <option>E</option>
-      <option>F</option>
-    </select>
-  </div>
-</div>
-
-<div class="flex-row">
-  <div>
-    <label>Room No:</label>
-    <input type="text" name="room_no" required>
-  </div>
-  <div>
-    <label>Type:</label>
-    <select name="class_type" required>
-      <option value="Theory">Theory</option>
-      <option value="Tutorial">Tutorial</option>
-      <option value="Lab">Lab</option>
-    </select>
-  </div>
-</div>
-
-<div class="flex-row align-center">
-  <input type="checkbox" id="isTemporary" name="submit_type" value="temporary" onchange="toggleDateFields()">
-  <label for="isTemporary">Save Temporarily</label>
-</div>
-
-<div id="dateRangeFields" class="flex-row" style="display: none;">
-  <div>
-    <label>Start Date:</label>
-    <input type="date" name="start_date" id="start_date">
-  </div>
-  <div>
-    <label>End Date:</label>
-    <input type="date" name="end_date" id="end_date">
-  </div>
-</div>
-
-<button type="submit" class="btn form-submit-btn">Save Schedule</button>
-
-    </form>
-    
-</div>
-</div>
-<div id="cancelPopup" class="edit-popup">
-<div class="edit-popup-content themed-popup">
-    <span class="close-btn" onclick="closeCancelPopup()">&times;</span>
-    <h3>Cancel Class</h3>
-    <form method="post" action="/cancel_class/">
-    {% csrf_token %}
-
-    <div class="flex-row">
-        <p><strong>Day:</strong> <span id="cancel-day-display"></span></p>
-        <p><strong>Time Slot:</strong> <span id="cancel-time-display"></span></p>
-    </div>
-
-    <input type="hidden" name="day" id="cancel-day">
-    <input type="hidden" name="time_slot" id="cancel-time">
-
-    <div class="flex-row">
         <div>
-        <label>Start Date:</label>
-        <input type="date" name="start_date" required>
+          <label>Class Name:</label>
+          <select name="class_name" required>
+            <option value="">Select Class</option>
+            <option value="AIML">AIML</option>
+            <option value="CS">CS</option>
+            <option value="Mechanical">Mechanical</option>
+            <option value="Instrumentation">Instrumentation</option>
+          </select>
         </div>
         <div>
-        <label>End Date:</label>
-        <input type="date" name="end_date" required>
+          <label>Division:</label>
+          <select name="division" required>
+            <option value="">Select Division</option>
+            <option>A</option><option>B</option><option>C</option>
+            <option>D</option><option>E</option><option>F</option>
+          </select>
         </div>
-    </div>
+        <div>
+          <label>Year:</label>
+          <select name="year" required>
+            <option value="">Select</option>
+            <option value="FY">FY</option>
+            <option value="SY">SY</option>
+            <option value="TY">TY</option>
+            <option value="4Y">4Y</option>
+          </select>
+        </div>
+        <div>
+          <label>Subject Name:</label>
+          <input type="text" name="subject_name" required>
+        </div>
+      </div>
 
-    <button type="submit" class="btn form-submit-btn cancel-btn-confirm">Confirm Cancellation</button>
+      <!-- Second Row -->
+      <div class="flex-row">
+        <div>
+          <label>Room No:</label>
+          <input type="text" name="room_no" required>
+        </div>
+        <div>
+          <label>Type:</label>
+          <select name="class_type" required>
+            <option value="Theory">Theory</option>
+            <option value="Tutorial">Tutorial</option>
+            <option value="Lab">Lab</option>
+          </select>
+        </div>
+        <div>
+          <label>Batch:</label>
+          <select name="batch">
+            <option value="All" selected>All</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Optional Temporary Checkbox -->
+      <div class="flex-row align-center">
+        <input type="checkbox" id="isTemporary" name="submit_type" value="temporary" onchange="toggleDateFields()">
+        <label for="isTemporary">Save Temporarily</label>
+      </div>
+
+      <div id="dateRangeFields" class="flex-row" style="display: none;">
+        <div>
+          <label>Start Date:</label>
+          <input type="date" name="start_date" id="start_date">
+        </div>
+        <div>
+          <label>End Date:</label>
+          <input type="date" name="end_date" id="end_date">
+        </div>
+      </div>
+
+      <button type="submit" class="btn form-submit-btn">Save Schedule</button>
     </form>
+  </div>
 </div>
-</div>
+
 
 
 
