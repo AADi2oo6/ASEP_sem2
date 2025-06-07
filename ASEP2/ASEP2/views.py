@@ -8,15 +8,6 @@ from django.utils.dateparse import parse_date
 from login.models import login,Flogin
 
 from TimeTable.models import StudentsTT,FacultysTT,TempFacultysTT
-# StudentsTT.objects.all().update(course_name= "AI")
-# import csv
-
-# with open('FacultyName.csv', newline='', encoding='utf-8') as f:
-#     reader = csv.DictReader(f)
-#     for row in reader:
-#         name = row['Name'].strip()
-#         Teacher_name.objects.get_or_create(name=name)
-
 
 
 def index(request):
