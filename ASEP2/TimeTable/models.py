@@ -157,27 +157,19 @@ class TempFacultysTT(models.Model):
     day = models.CharField(max_length=10, choices=DAY_CHOICES)
     time_slot = models.CharField(max_length=20, choices=TIME_SLOTS)
     room_no = models.CharField(max_length=10)
+    teachersID = models.IntegerField(default=00000)
     subject_name = models.CharField(max_length=100)
     teacher_name = models.CharField(max_length=100)
+    year = models.CharField(max_length=2, default=None, null=True)
     class_type = models.CharField(max_length=10, choices=CLASS_TYPE_CHOICES)
     course_name = models.CharField(max_length=50)
     division = models.CharField(max_length=10)
+    batch = models.CharField(max_length=10,default="all")
+
     start_date = models.DateField()
     end_date = models.DateField()
 
-    # List of identifier names:
-    # [
-    #     "day",
-    #     "time_slot",
-    #     "room_no",
-    #     "subject_name",
-    #     "teacher_name",
-    #     "class_type",
-    #     "course_name",
-    #     "division",
-    #     "start_date",
-    #     "end_date"
-    # ]
+
 
     def __str__(self):
         return f"{self.teacher_name} - {self.day} {self.time_slot} ({self.start_date} to {self.end_date})"

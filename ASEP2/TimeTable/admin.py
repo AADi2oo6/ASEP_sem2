@@ -115,10 +115,13 @@ class TempFacultysTTAdmin(admin.ModelAdmin):
         "time_slot",
         "room_no",
         "subject_name",
+        "teachersID",
         "teacher_name",
+        "year",
         "class_type",
         "course_name",
         "division",
+        "batch",
         "start_date",
         "end_date"
     ]

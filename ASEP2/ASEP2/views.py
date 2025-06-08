@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime,date
 from django.shortcuts import render,redirect
 from django.http import HttpResponse , HttpResponseRedirect
 from django.contrib import messages #for Alert messages
@@ -56,28 +56,43 @@ def logout_views(request):
     return redirect("index")  # or wherever you want to send them
 
 
-def schedule(request,Name=None):
+
+def schedule(request, Name=None):
     data = {}
     user_data = request.session.get("user")
+    today_date = date.today()
 
-    if Name is None: 
-        # Handle logged-in user (student or faculty)
+    # --- Load permanent timetable ---
+    if Name is None:
         if request.session.get("role") == "Faculty":
             TTd = FacultysTT.objects.filter(teacher_name__Name=request.session.get("Name"))
-            data["teachersId"] = user_data["teachersID"]      
-        else: 
-            TTd = FacultysTT.objects.filter(course_name=user_data["course_name"], div=user_data["div"] )
-            # TTd = StudentsTT.objects.filter(course_name=user_data["course_name"], div=user_data["div"] )
+            data["teachersId"] = user_data["teachersID"]
+            Name = user_data["Name"]
+            temp_tt = TempFacultysTT.objects.filter(
+                teacher_name=Name,
+                end_date__gte=today_date  # ✅ show temp data as long as it's still valid
+            )
+        else:
+            TTd = FacultysTT.objects.filter(course_name=user_data["course_name"], div=user_data["div"])
+            Name = user_data["Name"]
+            temp_tt = TempFacultysTT.objects.filter(
+                course_name=user_data["course_name"],
+                division=user_data["div"],
+                batch__in=["all", user_data["batch"]],
+                end_date__gte=today_date
+            )
             data["class"] = f"{user_data['course_name']} - {user_data['div']}"
             data["batch"] = user_data["batch"]
-        Name = user_data["Name"]
         role = request.session.get("role")
     else:
-        # Handle name passed via URL (e.g., from faculty cards)
         TTd = FacultysTT.objects.filter(teacher_name__Name=Name)
-        role = Name    
+        temp_tt = TempFacultysTT.objects.filter(
+            teacher_name=Name,
+            end_date__gte=today_date
+        )
+        role = Name
 
-    # Generate time table structure
+    # --- Time grid ---
     days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
     hours = ['8-9 AM', '9-10 AM', '10-11 AM', '11-12 PM', '12-1 PM', '1-2 PM',
              '2-3 PM', '3-4 PM', '4-5 PM', '5-6 PM', '6-7 PM', '7-8 PM']
@@ -86,14 +101,40 @@ def schedule(request,Name=None):
 
     for day in days:
         for hour in hours:
-            found = False
-            for entry in TTd:
-                if entry.day == day and entry.time_slot == hour:
-                    dic[day][hour] = (entry.room_no, entry.subject_name, entry.teacher_name, entry.class_type,entry.course_name,entry.div)
-                    found = True
+            # Default empty
+            dic[day][hour] = ("", "", "", "", "", "")
+
+            # 🟡 Check temp timetable first
+            temp_entry_found = False
+            for temp in temp_tt:
+                if temp.day == day and temp.time_slot == hour:
+                    # Format date range
+                    date_range = f"{temp.start_date.strftime('%d %b')} - {temp.end_date.strftime('%d %b')}"
+                    dic[day][hour] = (
+                        temp.room_no,
+                        temp.subject_name,
+                        temp.teacher_name,
+                        temp.class_type,
+                        temp.course_name,
+                        temp.division,
+                        date_range
+                    )
+                    temp_entry_found = True
                     break
-            if not found:
-                dic[day][hour] = ("", "", "", "")
+
+            # ⚪️ Fall back to permanent if no temp entry
+            if not temp_entry_found:
+                for entry in TTd:
+                    if entry.day == day and entry.time_slot == hour:
+                        dic[day][hour] = (
+                            entry.room_no,
+                            entry.subject_name,
+                            entry.teacher_name,
+                            entry.class_type,
+                            entry.course_name,
+                            entry.div
+                        )
+                        break
 
     today = datetime.today().strftime("%A")
 
@@ -108,7 +149,7 @@ def schedule(request,Name=None):
 
     return render(request, 'student_schedule.html', data)
 
-from datetime import datetime
+
 
 def update_schedule(request):
     if request.method == "POST":
