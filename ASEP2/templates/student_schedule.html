@@ -93,6 +93,7 @@
           align-items: center;
           z-index: 999;
         }
+        
 
 
         
@@ -139,7 +140,11 @@
                                     {% endif %}">
                                     <h3>Room No: {{ class_details.0 }}</h3>
                                     <hr>
-                                    <p style = "background-color : red;">{{ class_details.6 }}</p>
+                                    <p style = "background-color : red;">{{ class_details.6}}</p>
+                                    {% if 'Canceled' in class_details.3  %}
+                                    <p style = "background-color : red;">Canceled <br> {{sday}}-{{eday}}</p>
+
+                                    {% endif %}
                                     <p>{{ class_details.4 }} {{ class_details.5}}</p>
                                     <p>{{ class_details.1 }}</p>
                                     {% if Role == "Student" %}
@@ -177,9 +182,11 @@
   <div class="edit-popup-content themed-popup">
     <span class="close-btn" onclick="closeEditPopup()">&times;</span>
     <h3>Edit Class Schedule</h3>
+    
     <form id="editForm" method="post" action="/update_schedule/">
       {% csrf_token %}
-
+      
+      <p>Editing schedule for <span id="visible-day"></span> at <span id="visible-time"></span></p>
       <input type="hidden" name="day" id="popup-day">
       <input type="hidden" name="time_slot" id="popup-time">
 
@@ -272,19 +279,60 @@
   <div class="edit-popup-content themed-popup">
     <span class="close-btn" onclick="closeCancelPopup()">&times;</span>
     <h3>Cancel Class</h3>
-    <p>Are you sure you want to cancel the class on <strong id="cancel-day-display"></strong> at <strong id="cancel-time-display"></strong>?</p>
 
-    <input type="hidden" id="cancel-day">
-    <input type="hidden" id="cancel-time">
+    <form id="cancelForm" method="post">
 
-    <div class="btn-group">
-      <button class="cancel-btn-confirm" onclick="cancelClass(
-        document.getElementById('cancel-day').value,
-        document.getElementById('cancel-time').value)">Yes, Cancel</button>
-      <button class="cancel-btn" onclick="closeCancelPopup()">No, Go Back</button>
-    </div>
+      {% csrf_token %}
+      <input type="hidden" name="day" id="cancel-day">
+      <input type="hidden" name="time_slot" id="cancel-time">
+
+      <div class="flex-row">
+        <div>
+          <label>Day:</label>
+          <input type="text" id="cancel-day-display" disabled>
+        </div>
+        <div>
+          <label>Time:</label>
+          <input type="text" id="cancel-time-display" disabled>
+        </div>
+      </div>
+
+      <div class="flex-row">
+        <div>
+          <label>Class Name:</label>
+          <input type="text" id="cancel-class-name" disabled>
+        </div>
+        <div>
+          <label>Room No:</label>
+          <input type="text" id="cancel-room" disabled>
+        </div>
+        
+      </div>
+
+      <div class="flex-row align-center">
+        <input type="checkbox" id="isTempCancel" name="cancel_type" value="temporary" onchange="toggleCancelDates()">
+        <label for="isTempCancel">Cancel Temporarily</label>
+      </div>
+
+      <div id="cancelDateFields" class="flex-row" style="display: none;">
+        <div>
+          <label>Start Date:</label>
+          <input type="date" name="start_date" id="cancel-start-date">
+        </div>
+        <div>
+          <label>End Date:</label>
+          <input type="date" name="end_date" id="cancel-end-date">
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <button type="submit" class="cancel-btn-confirm">Yes, Cancel</button>
+        <button type="button" class="cancel-btn" onclick="closeCancelPopup()">No, Go Back</button>
+      </div>
+    </form>
   </div>
 </div>
+
 
 
 
@@ -323,12 +371,44 @@
 
 
   function openCancelPopup(day, time) {
-    document.getElementById("cancelPopup").style.display = "flex";
-    document.getElementById("cancel-day").value = day;
-    document.getElementById("cancel-time").value = time;
-    document.getElementById("cancel-day-display").innerText = day;
-    document.getElementById("cancel-time-display").innerText = time;
+  const rows = document.querySelectorAll(".schedule-row");
+
+  for (const row of rows) {
+    const timeSlot = row.querySelector(".time-slot");
+    if (timeSlot && timeSlot.textContent.trim() === time.trim()) {
+      const dayIndex = getDayIndex(day);
+      const box = row.querySelectorAll(".schedule-box")[dayIndex];
+      if (box) {
+        const className = box.querySelector("p:nth-child(4)")?.innerText || "";
+        const roomNo = box.querySelector("h3")?.innerText.replace("Room No: ", "") || "";
+
+        document.getElementById("cancelPopup").style.display = "flex";
+        document.getElementById("cancel-day").value = day;
+        document.getElementById("cancel-time").value = time;
+        document.getElementById("cancel-day-display").value = day;
+        document.getElementById("cancel-time-display").value = time;
+        document.getElementById("cancel-class-name").value = className;
+        document.getElementById("cancel-room").value = roomNo;
+
+
+        document.getElementById("isTempCancel").checked = false;
+        document.getElementById("cancelDateFields").style.display = "none";
+      }
+      break;
+    }
   }
+}
+
+function getDayIndex(day) {
+  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  return days.indexOf(day);
+}
+
+function toggleCancelDates() {
+  const isChecked = document.getElementById("isTempCancel").checked;
+  document.getElementById("cancelDateFields").style.display = isChecked ? "flex" : "none";
+}
+
 
   function closeCancelPopup() {
     document.getElementById("cancelPopup").style.display = "none";
@@ -351,11 +431,6 @@ function getCookie(name) {
 }
 
 const csrftoken = getCookie('csrftoken');
-
-
-
-
-
 function cancelClass(day, time) {
   if (confirm(`Are you sure you want to cancel the class on ${day} at ${time}?`)) {
     fetch("/cancel_schedule/", {
@@ -380,6 +455,45 @@ function cancelClass(day, time) {
     });
   }
 }
+document.getElementById("cancelForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+
+  const isTemp = document.getElementById("isTempCancel").checked;
+
+  const payload = {
+    day: document.getElementById("cancel-day").value,
+    time_slot: document.getElementById("cancel-time").value,
+    cancel_type: isTemp ? "temporary" : "permanent"
+  };
+
+  if (isTemp) {
+    payload.start_date = document.getElementById("cancel-start-date").value;
+    payload.end_date = document.getElementById("cancel-end-date").value;
+  }
+
+  fetch("/cancel_schedule/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrftoken
+    },
+    body: JSON.stringify(payload)
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        alert(data.message);
+        window.location.reload();
+      } else {
+        alert("Error: " + data.error);
+      }
+    })
+    .catch(err => {
+      console.error("Cancel error:", err);
+      alert("Error cancelling class.");
+    });
+});
+
 
 </script>
 

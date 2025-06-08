@@ -131,6 +131,11 @@ class CandeledClassAdmin(admin.ModelAdmin):
     list_display = [
         "id",
         "teacher_name",
+        "subject_name",
+        "course_name", 
+        'division' ,
+        'batch',
+        'class_type' ,
         "day",
         "time_slot",
         "start_date",

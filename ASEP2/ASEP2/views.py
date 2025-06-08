@@ -1,14 +1,17 @@
 from datetime import datetime,date
 from django.shortcuts import render,redirect
-from django.http import HttpResponse , HttpResponseRedirect
+from django.http import HttpResponse , HttpResponseRedirect, JsonResponse
 from django.contrib import messages #for Alert messages
 from django.forms.models import model_to_dict # using this to access the whole data of user in one go in form of dicet
 from django.utils.dateparse import parse_date
 
 from login.models import login,Flogin
 
-from TimeTable.models import StudentsTT,FacultysTT,TempFacultysTT
+from TimeTable.models import StudentsTT,FacultysTT,TempFacultysTT, CanceledClass
 
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.dateparse import parse_date
+import json
 
 def index(request):
     if request.method == "POST":
@@ -70,15 +73,16 @@ def schedule(request, Name=None):
             Name = user_data["Name"]
             temp_tt = TempFacultysTT.objects.filter(
                 teacher_name=Name,
-                end_date__gte=today_date  # ✅ show temp data as long as it's still valid
+                end_date__gte=today_date
             )
         else:
             TTd = FacultysTT.objects.filter(course_name=user_data["course_name"], div=user_data["div"])
             Name = user_data["Name"]
+            
             temp_tt = TempFacultysTT.objects.filter(
                 course_name=user_data["course_name"],
                 division=user_data["div"],
-                batch__in=["all", user_data["batch"]],
+                # batch__in=["all", user_data["batch"]],
                 end_date__gte=today_date
             )
             data["class"] = f"{user_data['course_name']} - {user_data['div']}"
@@ -92,7 +96,22 @@ def schedule(request, Name=None):
         )
         role = Name
 
-    # --- Time grid ---
+    # 🔁 Load canceled classes for faculty or students appropriately
+    if request.session.get("role") == "Faculty":
+        canceled = CanceledClass.objects.filter(
+            teacher_name=Name,
+            end_date__gte=today_date
+        )
+    else:
+        canceled = CanceledClass.objects.filter(
+            course_name=user_data["course_name"],
+            division=user_data["div"],
+            batch__in=["all", user_data["batch"]],
+            end_date__gte=today_date
+        )
+
+
+
     days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
     hours = ['8-9 AM', '9-10 AM', '10-11 AM', '11-12 PM', '12-1 PM', '1-2 PM',
              '2-3 PM', '3-4 PM', '4-5 PM', '5-6 PM', '6-7 PM', '7-8 PM']
@@ -101,20 +120,27 @@ def schedule(request, Name=None):
 
     for day in days:
         for hour in hours:
-            # Default empty
-            dic[day][hour] = ("", "", "", "", "", "")
+            dic[day][hour] = ("", "", "", "", "", "", "")  # empty by default
+
+            # 🔁 Check if class is canceled
+            
+
+            cancel_entry = next((c for c in canceled if c.day == day and c.time_slot == hour), None)
+            is_canceled = cancel_entry is not None
+            cancel_remark = f" (Canceled)" if is_canceled else ""
+
+
 
             # 🟡 Check temp timetable first
             temp_entry_found = False
             for temp in temp_tt:
                 if temp.day == day and temp.time_slot == hour:
-                    # Format date range
                     date_range = f"{temp.start_date.strftime('%d %b')} - {temp.end_date.strftime('%d %b')}"
                     dic[day][hour] = (
                         temp.room_no,
                         temp.subject_name,
                         temp.teacher_name,
-                        temp.class_type,
+                        temp.class_type + cancel_remark,
                         temp.course_name,
                         temp.division,
                         date_range
@@ -122,7 +148,6 @@ def schedule(request, Name=None):
                     temp_entry_found = True
                     break
 
-            # ⚪️ Fall back to permanent if no temp entry
             if not temp_entry_found:
                 for entry in TTd:
                     if entry.day == day and entry.time_slot == hour:
@@ -130,26 +155,29 @@ def schedule(request, Name=None):
                             entry.room_no,
                             entry.subject_name,
                             entry.teacher_name,
-                            entry.class_type,
+                            entry.class_type + cancel_remark,
                             entry.course_name,
-                            entry.div
+                            entry.div,
+                            ""  # no remark
                         )
                         break
 
     today = datetime.today().strftime("%A")
-
+    
+    sday = canceled.values_list('start_date', flat=True).first()
+    eday = canceled.values_list('end_date', flat=True).first()
     data.update({
         "Name": Name,
         "Role": role,
         'days': days,
         'hours': hours,
         'today': today,
-        "dic": dic
+        "dic": dic,
+        "sday":sday,
+        "eday":eday
     })
 
     return render(request, 'student_schedule.html', data)
-
-
 
 def update_schedule(request):
     if request.method == "POST":
@@ -211,6 +239,95 @@ def update_schedule(request):
 
     return redirect('http://127.0.0.1:8000/schedule/')  # fallback
 
+
+@csrf_exempt
+def cancel_schedule(request):
+    if request.method == "POST":
+        try:
+            data = request.POST or json.loads(request.body.decode("utf-8"))
+
+            day = data.get("day")
+            time_slot = data.get("time_slot")
+            cancel_type = data.get("cancel_type")
+
+            user = request.session.get("user")
+            teacher = Flogin.objects.get(Name=user["Name"])
+            teacher_id = user["teachersID"]
+
+            # Check in TempFacultysTT first
+            temp_class = TempFacultysTT.objects.filter(
+                teacher_name=teacher.Name,
+                teachersID=teacher_id,
+                day=day,
+                time_slot=time_slot
+            ).first()
+
+            if cancel_type == "temporary":
+                start_date = parse_date(data.get("start_date"))
+                end_date = parse_date(data.get("end_date"))
+
+                if temp_class:
+                    # Create cancel entry and delete temp class
+                    CanceledClass.objects.create(
+                        teacher_name=teacher,
+                        subject_name=temp_class.subject_name,
+                        course_name=temp_class.course_name,
+                        division=temp_class.division,
+                        batch=temp_class.batch,
+                        class_type=temp_class.class_type,
+                        day=temp_class.day,
+                        time_slot=temp_class.time_slot,
+                        start_date=start_date,
+                        end_date=end_date
+                    )
+                    temp_class.delete()
+                    return JsonResponse({"success": True, "message": "Temporary class canceled."})
+
+                # Otherwise check for permanent class
+                existing_class = FacultysTT.objects.filter(
+                    teacher_name=teacher,
+                    day=day,
+                    time_slot=time_slot
+                ).first()
+
+                if existing_class:
+                    CanceledClass.objects.create(
+                        teacher_name=teacher,
+                        subject_name=existing_class.subject_name,
+                        course_name=existing_class.course_name,
+                        division=existing_class.div,
+                        batch=existing_class.batch,
+                        class_type=existing_class.class_type,
+                        day=existing_class.day,
+                        time_slot=existing_class.time_slot,
+                        start_date=start_date,
+                        end_date=end_date
+                    )
+                    return JsonResponse({"success": True, "message": "Permanent class temporarily canceled."})
+
+                return JsonResponse({"success": False, "error": "Class not found to cancel temporarily."})
+
+            else:  # Permanent cancel
+                if temp_class:
+                    temp_class.delete()
+                    return JsonResponse({"success": True, "message": "Temporary class permanently deleted."})
+
+                existing_class = FacultysTT.objects.filter(
+                    teacher_name=teacher,
+                    day=day,
+                    time_slot=time_slot
+                ).first()
+
+                if existing_class:
+                    existing_class.delete()
+                    return JsonResponse({"success": True, "message": "Permanent class canceled."})
+
+                return JsonResponse({"success": False, "error": "Class not found to delete permanently."})
+
+        except Exception as e:
+            return JsonResponse({"success": False, "error": str(e)})
+
+    return JsonResponse({"success": False, "error": "Invalid request method."})
 
 def timeTalbePage(request):
     fdata = Flogin.objects.all()

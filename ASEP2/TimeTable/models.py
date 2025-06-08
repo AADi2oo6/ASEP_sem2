@@ -175,7 +175,12 @@ class TempFacultysTT(models.Model):
         return f"{self.teacher_name} - {self.day} {self.time_slot} ({self.start_date} to {self.end_date})"
       
 class CanceledClass(models.Model):
-    teacher_name = models.ForeignKey(Flogin, on_delete=models.CASCADE)
+    teacher_name = models.CharField(max_length=100)
+    subject_name = models.CharField(max_length=100,default="NA")
+    course_name = models.CharField(max_length=50,default="NA")
+    division = models.CharField(max_length=10,default="NA")
+    batch = models.CharField(max_length=10,default="all")
+    class_type = models.CharField(max_length=10,default="Theory")
     day = models.CharField(max_length=20)              # e.g., 'Monday'
     time_slot = models.CharField(max_length=20)        # e.g., '9-10 AM'
     start_date = models.DateField()
@@ -183,4 +188,4 @@ class CanceledClass(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.teacher.Name} | {self.day} {self.time_slot} | {self.start_date} to {self.end_date}"
+        return f"{self.teacher_name} | {self.day} {self.time_slot} | {self.start_date} to {self.end_date}"
