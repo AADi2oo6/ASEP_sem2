@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Live Room Status</title>
-  <link rel="stylesheet" href="{% static 'css/buildingpage.css' %}">
+  <link rel="stylesheet" href="{% static 'css/RoomStatusPage.css' %}">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
@@ -29,12 +29,13 @@
         <div class="room-card {{ room.status }} {% if forloop.counter > 6 %}hidden-card{% endif %}" 
            data-room="{{ room.number }}" data-teacher="{{ room.teacher }}">
         <h3>Room: {{ room.number }}</h3>
+        <hr>
         <p><strong>Type:</strong> {{ room.type }}</p>
         <p><strong>Teacher:</strong> {{ room.teacher }}</p>
         <p><strong>Subject:</strong> {{ room.subject }}</p>
         <p><strong>Class:</strong> {{ room.class }}</p>
         <div class="card-actions">
-          <a href="#" class="btn">View</a>
+          <a href="/schedule/{{UserData.Name}}/{{room.number}}/" class="btn">View TT</a>
         </div>
         </div>
       {% endfor %}

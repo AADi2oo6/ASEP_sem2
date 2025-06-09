@@ -7,7 +7,7 @@ from django.utils.dateparse import parse_date
 
 from login.models import login,Flogin
 
-from TimeTable.models import StudentsTT,FacultysTT,TempFacultysTT, CanceledClass
+from TimeTable.models import FacultysTT,TempFacultysTT, CanceledClass
 
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.dateparse import parse_date
@@ -43,8 +43,6 @@ def index(request):
             messages.error(request, "Username Not Found!")
     return render(request, "index.html")
 
-
-
 def login_view(request):
     data = {
         "name" : request.session.get("Name")
@@ -57,8 +55,6 @@ def login_view(request):
 def logout_views(request):
     request.session.flush()  # Clears all session data
     return redirect("index")  # or wherever you want to send them
-
-
 
 def schedule(request, Name=None):
     data = {}
@@ -177,7 +173,7 @@ def schedule(request, Name=None):
         "eday":eday
     })
 
-    return render(request, 'student_schedule.html', data)
+    return render(request, 'schedule.html', data)
 
 def update_schedule(request):
     if request.method == "POST":
@@ -238,7 +234,6 @@ def update_schedule(request):
         return redirect('http://127.0.0.1:8000/schedule/')  # Change to your correct schedule view name
 
     return redirect('http://127.0.0.1:8000/schedule/')  # fallback
-
 
 @csrf_exempt
 def cancel_schedule(request):
@@ -329,16 +324,22 @@ def cancel_schedule(request):
 
     return JsonResponse({"success": False, "error": "Invalid request method."})
 
-def timeTalbePage(request):
+def F_timeTalbePage(request):
     fdata = Flogin.objects.all()
     return render(request, "FacultyTimetable.html", {"Names": fdata})  # Pass Names to the template
 
 
 
-def buildingpage(request):
+def RoomStatusPage(request):
     # Get all unique room numbers
     TTd = FacultysTT.objects.all()
     roomNO = TTd.values_list('room_no', flat=True).distinct()
+
+    UserData = request.session.get('user')
+    role = request.session.get('role')
+    print(" ;   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;")
+    print(UserData)
+    print(role)
 
     # Get current day and current time slot
     now = datetime.now()
@@ -393,23 +394,8 @@ def buildingpage(request):
             room_info["type"] = "Classroom"
             room_data["Building 4 : INSTRUMENTATION"].append(room_info)
 
-    return render(request, 'buildingpage.html', {'room_data': room_data})
+    return render(request, 'RoomStatusPage.html', {'room_data': room_data,'role':role,"UserData":UserData})
 
-def rooms(request):
-    rooms = range(1, 31)  # Create list of room numbers 1 to 30
-    return render(request, 'rooms.html', {'rooms': rooms})
-
-def floor(request):
-    return render(request, 'floor.html')
-
-def freeclassrooms(request):
-     availability = {
-        '1': ['101', '102', '103'],
-        '2': ['201', '202'],
-        '3': [],
-        '4': ['401', '402', '403', '404'],
-    }
-     return render(request, 'freeclassrooms.html', {'availability': availability})
 
 def branchschedule(request):
     return render(request,'branchschedule.html')
