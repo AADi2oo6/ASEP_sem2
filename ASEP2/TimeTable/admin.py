@@ -131,6 +131,7 @@ class CandeledClassAdmin(admin.ModelAdmin):
     list_display = [
         "id",
         "teacher_name",
+        "room_no",
         "subject_name",
         "course_name", 
         'division' ,
@@ -142,3 +143,5 @@ class CandeledClassAdmin(admin.ModelAdmin):
         "end_date",
         "created_at"
     ]
+    search_fields = ("subject_name", "course_name","room_no")
+

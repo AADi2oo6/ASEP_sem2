@@ -27,8 +27,7 @@ urlpatterns = [
     path("logOut/",views.logout_views,name="logout"),
     path('dashboard/', views.login_view, name='login'),
     path('schedule/', views.schedule, name='own_schedule'),
-    path('schedule/<str:Name>/', views.schedule, name='teacher_schedule'),
-    path('schedule/<str:Name>/<int:RoomNo>/', views.schedule, name='Room_schedule'),
+    path('schedule/<str:identifier>/', views.schedule, name='generic_schedule'),
     path("RoomStatusPage",views.RoomStatusPage),
 
     # path("freeclassrooms",views.freeclassrooms),

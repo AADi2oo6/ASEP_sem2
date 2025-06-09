@@ -280,8 +280,6 @@
     </div>
   </div>
 
-
-
   <div id="cancelPopup" class="edit-popup">
     <div class="edit-popup-content themed-popup">
       <span class="close-btn" onclick="closeCancelPopup()">&times;</span>
@@ -311,7 +309,7 @@
           </div>
           <div>
             <label>Room No:</label>
-            <input type="text" id="cancel-room" disabled>
+            <input type="text" name="room_no" id="cancel-room" readonly>
           </div>
 
         </div>
@@ -339,8 +337,6 @@
       </form>
     </div>
   </div>
-
-
 
 
 </body>
@@ -470,7 +466,8 @@
     const payload = {
       day: document.getElementById("cancel-day").value,
       time_slot: document.getElementById("cancel-time").value,
-      cancel_type: isTemp ? "temporary" : "permanent"
+      cancel_type: isTemp ? "temporary" : "permanent",
+      room_no: document.getElementById("cancel-room").value  // ✅ ADD THIS
     };
 
     if (isTemp) {
@@ -503,6 +500,5 @@
 
 
 </script>
-
 
 </html>

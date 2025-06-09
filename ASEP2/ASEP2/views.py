@@ -56,58 +56,54 @@ def logout_views(request):
     request.session.flush()  # Clears all session data
     return redirect("index")  # or wherever you want to send them
 
-def schedule(request, Name=None):
+def schedule(request, identifier=None):
     data = {}
-    user_data = request.session.get("user")
     today_date = date.today()
+    user_data = request.session.get("user")
+    role = request.session.get("role")
+    
+    is_room_view = False
+    TTd = []
+    temp_tt = []
+    canceled = []
 
-    # --- Load permanent timetable ---
-    if Name is None:
-        if request.session.get("role") == "Faculty":
-            TTd = FacultysTT.objects.filter(teacher_name__Name=request.session.get("Name"))
-            data["teachersId"] = user_data["teachersID"]
-            Name = user_data["Name"]
-            temp_tt = TempFacultysTT.objects.filter(
-                teacher_name=Name,
-                end_date__gte=today_date
-            )
-        else:
-            TTd = FacultysTT.objects.filter(course_name=user_data["course_name"], div=user_data["div"])
-            Name = user_data["Name"]
-            
-            temp_tt = TempFacultysTT.objects.filter(
-                course_name=user_data["course_name"],
-                division=user_data["div"],
-                # batch__in=["all", user_data["batch"]],
-                end_date__gte=today_date
-            )
-            data["class"] = f"{user_data['course_name']} - {user_data['div']}"
-            data["batch"] = user_data["batch"]
-        role = request.session.get("role")
+    # 🌐 Determine type of identifier
+    if identifier is None and role == "Faculty":
+        teacher_name = request.session.get("Name")
+        TTd = FacultysTT.objects.filter(teacher_name__Name=teacher_name)
+        temp_tt = TempFacultysTT.objects.filter(teacher_name=teacher_name, end_date__gte=today_date)
+        canceled = CanceledClass.objects.filter(teacher_name=teacher_name, end_date__gte=today_date)
+        Name = teacher_name
+        data["teachersId"] = user_data["teachersID"]
+    elif identifier is None:
+        # Normal student
+        course = user_data["course_name"]
+        div = user_data["div"]
+        batch = user_data["batch"]
+        TTd = FacultysTT.objects.filter(course_name=course, div=div)
+        temp_tt = TempFacultysTT.objects.filter(course_name=course, division=div, end_date__gte=today_date)
+        canceled = CanceledClass.objects.filter(course_name=course, division=div, batch__in=["all", batch], end_date__gte=today_date)
+        Name = user_data["Name"]
+        data["class"] = f"{course} - {div}"
+        data["batch"] = batch
     else:
-        TTd = FacultysTT.objects.filter(teacher_name__Name=Name)
-        temp_tt = TempFacultysTT.objects.filter(
-            teacher_name=Name,
-            end_date__gte=today_date
-        )
-        role = Name
+        try:
+            # If identifier is room number (int or convertible to int)
+            RoomNo = int(identifier)
+            is_room_view = True
+            TTd = FacultysTT.objects.filter(room_no=RoomNo)
+            temp_tt = TempFacultysTT.objects.filter(room_no=RoomNo, end_date__gte=today_date)
+            canceled = CanceledClass.objects.filter(room_no=RoomNo, end_date__gte=today_date)
+            Name = f"Room {RoomNo}"
+        except ValueError:
+            # It's a faculty name
+            TTd = FacultysTT.objects.filter(teacher_name__Name=identifier)
+            temp_tt = TempFacultysTT.objects.filter(teacher_name=identifier, end_date__gte=today_date)
+            canceled = CanceledClass.objects.filter(teacher_name=identifier, end_date__gte=today_date)
+            Name = identifier
+            data["teachersId"] = Flogin.objects.get(Name=identifier).teachersID if Flogin.objects.filter(Name=identifier).exists() else ""
 
-    # 🔁 Load canceled classes for faculty or students appropriately
-    if request.session.get("role") == "Faculty":
-        canceled = CanceledClass.objects.filter(
-            teacher_name=Name,
-            end_date__gte=today_date
-        )
-    else:
-        canceled = CanceledClass.objects.filter(
-            course_name=user_data["course_name"],
-            division=user_data["div"],
-            batch__in=["all", user_data["batch"]],
-            end_date__gte=today_date
-        )
-
-
-
+    # Time table grid setup
     days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
     hours = ['8-9 AM', '9-10 AM', '10-11 AM', '11-12 PM', '12-1 PM', '1-2 PM',
              '2-3 PM', '3-4 PM', '4-5 PM', '5-6 PM', '6-7 PM', '7-8 PM']
@@ -116,18 +112,12 @@ def schedule(request, Name=None):
 
     for day in days:
         for hour in hours:
-            dic[day][hour] = ("", "", "", "", "", "", "")  # empty by default
-
-            # 🔁 Check if class is canceled
-            
+            dic[day][hour] = ("", "", "", "", "", "", "")  # default
 
             cancel_entry = next((c for c in canceled if c.day == day and c.time_slot == hour), None)
-            is_canceled = cancel_entry is not None
-            cancel_remark = f" (Canceled)" if is_canceled else ""
+            cancel_remark = f" (Canceled)" if cancel_entry else ""
 
-
-
-            # 🟡 Check temp timetable first
+            # Check temporary timetable first
             temp_entry_found = False
             for temp in temp_tt:
                 if temp.day == day and temp.time_slot == hour:
@@ -154,23 +144,25 @@ def schedule(request, Name=None):
                             entry.class_type + cancel_remark,
                             entry.course_name,
                             entry.div,
-                            ""  # no remark
+                            ""
                         )
                         break
 
     today = datetime.today().strftime("%A")
-    
+
     sday = canceled.values_list('start_date', flat=True).first()
     eday = canceled.values_list('end_date', flat=True).first()
+
     data.update({
         "Name": Name,
+        # "Role": "Faculty" if not is_room_view and role == "Faculty" else "Room",
         "Role": role,
-        'days': days,
-        'hours': hours,
-        'today': today,
+        "days": days,
+        "hours": hours,
+        "today": today,
         "dic": dic,
-        "sday":sday,
-        "eday":eday
+        "sday": sday,
+        "eday": eday
     })
 
     return render(request, 'schedule.html', data)
@@ -244,6 +236,10 @@ def cancel_schedule(request):
             day = data.get("day")
             time_slot = data.get("time_slot")
             cancel_type = data.get("cancel_type")
+            RoomNO = data.get("room_no")
+            print("_________________________________________________________")
+            print("ROOM NO:", RoomNO)
+
 
             user = request.session.get("user")
             teacher = Flogin.objects.get(Name=user["Name"])
@@ -254,7 +250,8 @@ def cancel_schedule(request):
                 teacher_name=teacher.Name,
                 teachersID=teacher_id,
                 day=day,
-                time_slot=time_slot
+                time_slot=time_slot,
+                room_no=RoomNO
             ).first()
 
             if cancel_type == "temporary":
@@ -265,6 +262,7 @@ def cancel_schedule(request):
                     # Create cancel entry and delete temp class
                     CanceledClass.objects.create(
                         teacher_name=teacher,
+                        room_no = RoomNO,
                         subject_name=temp_class.subject_name,
                         course_name=temp_class.course_name,
                         division=temp_class.division,
@@ -282,12 +280,14 @@ def cancel_schedule(request):
                 existing_class = FacultysTT.objects.filter(
                     teacher_name=teacher,
                     day=day,
-                    time_slot=time_slot
+                    time_slot=time_slot,
+                    room_no=RoomNO
                 ).first()
 
                 if existing_class:
                     CanceledClass.objects.create(
                         teacher_name=teacher,
+                        room_no = RoomNO,
                         subject_name=existing_class.subject_name,
                         course_name=existing_class.course_name,
                         division=existing_class.div,
@@ -327,7 +327,6 @@ def cancel_schedule(request):
 def F_timeTalbePage(request):
     fdata = Flogin.objects.all()
     return render(request, "FacultyTimetable.html", {"Names": fdata})  # Pass Names to the template
-
 
 
 def RoomStatusPage(request):

@@ -176,6 +176,7 @@ class TempFacultysTT(models.Model):
       
 class CanceledClass(models.Model):
     teacher_name = models.CharField(max_length=100)
+    room_no = models.CharField(max_length=10,default="NA")
     subject_name = models.CharField(max_length=100,default="NA")
     course_name = models.CharField(max_length=50,default="NA")
     division = models.CharField(max_length=10,default="NA")
