@@ -7,11 +7,11 @@
   {% load static %}
   <link rel="stylesheet" href="{% static 'css/announcement.css' %}">
 </head>
-<body>
+<body> 
   <header class="dashboard-header">
     <h1>📢 Faculty Announcements</h1>
     <p>Send important updates to selected branch and division.</p>
-    <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+    <a href="javascript:history.back()" class="logout-btn">Back</a>
   </header>
 
   <div class="announcement-container">

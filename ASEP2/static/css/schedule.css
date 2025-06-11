@@ -1,14 +1,14 @@
 body {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(145deg, #263d64, #1e2f4f);
+    background: linear-gradient(145deg, #0f1e46, #182848);
     color: #f0f0f0;
 }
 
 .dashboard-header {
     text-align: center;
     padding: 30px 0;
-    background-color: #1c2e4a;
+    background-color: #0a1734;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
