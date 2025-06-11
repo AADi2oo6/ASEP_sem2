@@ -51,12 +51,32 @@ def index(request):
     return render(request, "index.html")
 
 def login_view(request):
+    user = request.session.get("user")
+    name = user.get("Name")
+    role = request.session.get("role")
+
     data = {
-        "name" : request.session.get("Name")
+        "name": name,
     }
-    if request.session.get("role") == "Faculty":
+
+    if role == "Faculty":
         return render(request, "facalty_dashboard.html", data)
     else:
+        # For student, filter announcements
+        year = user.get("year")
+        branch = user.get("course_name")
+        section = user.get("div")
+        batch = user.get("batch")
+
+        announcements = Announcement.objects.filter(
+            years__icontains=year,
+            branches__icontains=branch,
+            sections__icontains=section,
+            batches__icontains=batch
+        ).order_by('-created_at')[:10]
+
+        data["announcements"] = announcements
+
         return render(request, "student_dashboard.html", data)
 
 def logout_views(request):
