@@ -13,6 +13,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.dateparse import parse_date
 import json
 
+from django.core.mail import send_mail
+from django.conf import settings
+
 def index(request):
     if request.method == "POST":
         username = request.POST.get("username")
@@ -401,3 +404,13 @@ def branchschedule(request):
 
 def announcements(request):
     return render(request,'announcements.html')
+
+def send_test_email():
+    send_mail(
+        subject='Test Email from Django',
+        message='Hello! This is a test email sent from Django project.',
+        from_email=settings.EMAIL_HOST_USER,
+        recipient_list=['arclighttextures@gmail.com'],
+        fail_silently=False,
+    )
+# send_test_email()
