@@ -33,7 +33,7 @@ urlpatterns = [
     # path("freeclassrooms",views.freeclassrooms),
     path("faculty_timetable",views.F_timeTalbePage),
     path("branchschedule",views.branchschedule),
-    path("announcements",views.announcements),
+    path("announcements",views.faculty_announcement,name = "announcements"),
     path("update_schedule/",views.update_schedule),
     path('cancel_schedule/', views.cancel_schedule, name='cancel_schedule')
 ]

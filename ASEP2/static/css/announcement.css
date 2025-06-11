@@ -1,14 +1,14 @@
 body {
   margin: 0;
   font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(145deg, #1a2a45, #152037);
+  background: linear-gradient(145deg, #0f1e46, #182848);
   color: #f0f0f0;
 }
 
 .dashboard-header {
   text-align: center;
   padding: 30px 0;
-  background-color: #0f1b2e;
+  background-color: #0a1734;
 }
 
 .dashboard-header h1 {
@@ -138,6 +138,6 @@ footer {
   text-align: center;
   padding: 15px;
   font-size: 14px;
-  background-color: #0f1b2e;
+  background-color: #0a1734;
   margin-top: 40px;
 }

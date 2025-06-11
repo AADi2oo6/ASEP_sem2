@@ -15,6 +15,10 @@ import json
 
 from django.core.mail import send_mail
 from django.conf import settings
+from django.core.mail import EmailMessage
+from announcements.models import Announcement
+from django.utils import timezone
+import os
 
 def index(request):
     if request.method == "POST":
@@ -402,15 +406,62 @@ def RoomStatusPage(request):
 def branchschedule(request):
     return render(request,'branchschedule.html')
 
-def announcements(request):
-    return render(request,'announcements.html')
+def faculty_announcement(request):
+    if request.method == 'POST':
+        teacher = request.session.get('user')
+        teacher_id = teacher.get("teachersID")
+        teacher_name = teacher.get("Name")
 
-def send_test_email():
-    send_mail(
-        subject='Test Email from Django',
-        message='Hello! This is a test email sent from Django project.',
-        from_email=settings.EMAIL_HOST_USER,
-        recipient_list=['arclighttextures@gmail.com'],
-        fail_silently=False,
-    )
-# send_test_email()
+        subject = request.POST.get('subject')
+        content = request.POST.get('content')
+        attachment = request.FILES.get('attachment')
+
+        years = request.POST.getlist('year')
+        branches = request.POST.getlist('branch')
+        sections = request.POST.getlist('section')
+        batches = request.POST.getlist('batch')
+
+        # Save to DB
+        announcement = Announcement.objects.create(
+            teacher_id=teacher_id,
+            teacher_name=teacher_name,
+            subject=subject,
+            content=content,
+            attachment=attachment,
+            years=years,
+            branches=branches,
+            sections=sections,
+            batches=batches,
+            created_at=timezone.now()
+        )
+
+        # ✅ Filter matching students from login model
+        recipients = login.objects.filter(
+            year__in=years,
+            course_name__in=branches,
+            div__in=sections,
+            batch__in=batches
+        ).values_list('userName', flat=True)
+
+        # ✅ Send email to recipients
+        if recipients:
+            email = EmailMessage(
+                subject=subject,
+                body=content,
+                from_email=settings.EMAIL_HOST_USER,
+                to=list(recipients),
+            )
+
+            if attachment:
+                email.attach(attachment.name, attachment.read(), attachment.content_type)
+
+            email.send(fail_silently=False)
+
+        messages.success(request, "✅ Announcement submitted and sent via email.")
+        return redirect('announcements')
+
+    # GET request
+    announcements = Announcement.objects.all().order_by('-created_at')[:20]
+    return render(request, 'announcements.html', {
+        'announcements': announcements
+    })

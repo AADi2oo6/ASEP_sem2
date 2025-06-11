@@ -38,6 +38,37 @@
   flex-direction: column-reverse;
   gap: 12px;
 }
+.attachment-link {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 6px 12px;
+  background-color:rgb(0, 43, 100);
+  color: #f0f0f0;
+  text-decoration: none;
+  font-weight: 500;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+}
+
+.attachment-link:hover {
+  background-color:rgb(4, 56, 124);
+  color: #fff;
+  text-decoration: underline;
+}
+.message-container {
+  margin-bottom: 20px;
+}
+
+.success-message {
+  background-color: #d4edda;
+  border: 1px solid #155724;
+  color: #155724;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-weight: bold;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
 
   </style>
 </head>
@@ -47,6 +78,13 @@
     <p>Send important updates to selected branch and division.</p>
     <a href="javascript:history.back()" class="btn back-btn">Back</a>
   </header>
+  {% if messages %}
+  <div class="message-container">
+    {% for message in messages %}
+      <div class="success-message">{{ message }}</div>
+    {% endfor %}
+  </div>
+{% endif %}
 
   <main class="container">
     <div class="form-box">
@@ -117,26 +155,23 @@
     <div class="announcement-panel">
       <h3>📋 Previous Announcements</h3>
       <div class="announcement-list">
+        {% for a in announcements reversed %}
         <div class="announcement-entry">
-          <h4>Subject: Exam Schedule</h4>
-          <p>The end-semester exams will start from 20th June.</p>
-          <small>Posted on: 10 June 2025</small>
+          <strong>Subject: {{ a.subject }}</strong>
+          <hr>
+          <p>{{ a.content }}</p>
+          {% if a.attachment %}
+            <a href="{{ a.attachment.url }}" class="attachment-link" target="_blank">
+                📎 View Attachment
+              </a>         
+           {% endif %}
+          <br>
+          <small>Posted by {{ a.teacher_name }} on {{ a.created_at|date:"d M Y" }}</small>
         </div>
-        <div class="announcement-entry">
-          <h4>Subject: Lab Maintenance</h4>
-          <p>Lab 3A will be closed on 15th June for equipment maintenance.</p>
-          <small>Posted on: 09 June 2025</small>
-        </div>
-        <div class="announcement-entry">
-          <h4>Subject: Guest Lecture</h4>
-          <p>Join us for a guest lecture by Dr. Sharma on AI trends.</p>
-          <small>Posted on: 08 June 2025</small>
-        </div>
-        <div class="announcement-entry">
-          <h4>Subject: Exam Schedule</h4>
-          <p>The end-semester exams will start from 20th June.</p>
-          <small>Posted on: 10 June 2025</small>
-        </div>
+
+        {% endfor %}
+      </div>
+      
         
       </div>
     </div>
