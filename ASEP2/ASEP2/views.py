@@ -114,21 +114,37 @@ def schedule(request, identifier=None):
         data["class"] = f"{course} - {div}"
         data["batch"] = batch
     else:
-        try:
-            # If identifier is room number (int or convertible to int)
-            RoomNo = int(identifier)
-            is_room_view = True
-            TTd = FacultysTT.objects.filter(room_no=RoomNo)
-            temp_tt = TempFacultysTT.objects.filter(room_no=RoomNo, end_date__gte=today_date)
-            canceled = CanceledClass.objects.filter(room_no=RoomNo, end_date__gte=today_date)
-            Name = f"Room {RoomNo}"
-        except ValueError:
-            # It's a faculty name
-            TTd = FacultysTT.objects.filter(teacher_name__Name=identifier)
-            temp_tt = TempFacultysTT.objects.filter(teacher_name=identifier, end_date__gte=today_date)
-            canceled = CanceledClass.objects.filter(teacher_name=identifier, end_date__gte=today_date)
-            Name = identifier
-            data["teachersId"] = Flogin.objects.get(Name=identifier).teachersID if Flogin.objects.filter(Name=identifier).exists() else ""
+        if "-" in identifier:
+            try:
+                course_name, year, div = identifier.split("-")
+
+                TTd = FacultysTT.objects.filter(course_name=course_name, div=div)
+                temp_tt = TempFacultysTT.objects.filter(course_name=course_name, division=div, end_date__gte=today_date)
+                canceled = CanceledClass.objects.filter(course_name=course_name, division=div, end_date__gte=today_date)
+
+                Name = f"{course_name} {year} - {div}"
+                # role = "Branch"
+                data["class"] = f"{course_name} - {div}"
+
+            except ValueError:
+                return HttpResponse("Invalid identifier format.", status=400)
+        else:
+            try:
+                # If identifier is room number (int or convertible to int)
+                RoomNo = int(identifier)
+                is_room_view = True
+                TTd = FacultysTT.objects.filter(room_no=RoomNo)
+                temp_tt = TempFacultysTT.objects.filter(room_no=RoomNo, end_date__gte=today_date)
+                canceled = CanceledClass.objects.filter(room_no=RoomNo, end_date__gte=today_date)
+                Name = f"Room {RoomNo}"
+            except ValueError:
+                # It's a faculty name
+                TTd = FacultysTT.objects.filter(teacher_name__Name=identifier)
+                temp_tt = TempFacultysTT.objects.filter(teacher_name=identifier, end_date__gte=today_date)
+                canceled = CanceledClass.objects.filter(teacher_name=identifier, end_date__gte=today_date)
+                Name = identifier
+                data["teachersId"] = Flogin.objects.get(Name=identifier).teachersID if Flogin.objects.filter(Name=identifier).exists() else ""
+    
 
     # Time table grid setup
     days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
@@ -424,7 +440,8 @@ def RoomStatusPage(request):
 
 
 def branchschedule(request):
-    return render(request,'branchschedule.html')
+    departments = ["CS", "CSAIML", "IT", "AIDS"]  # or dynamically from DB
+    return render(request, "branchschedule.html", {"departments": departments})
 
 def faculty_announcement(request):
     if request.method == 'POST':

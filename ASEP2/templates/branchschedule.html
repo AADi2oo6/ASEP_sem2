@@ -1,16 +1,65 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Branch Timetable</title>
-    <link rel="stylesheet" href="{% static 'css/schedule.css' %}">
+    <link rel="stylesheet" href="{% static 'css/branchschedule.css' %}" />
 </head>
+
 <body>
+    <div class="dashboard-header">
+        <h1>📘 Branch Timetable</h1>
+        <p>Select a branch and division to view the weekly schedule</p>
+        <a href="{% url 'login' %}" class="logout-btn">Back</a>
+    </div>
 
-<div class="dashboard-header">
-    <h1>📘 Branch Timetable</h1>
-    <p>Select a branch and division to view the weekly schedule</p>
-    <a href="{% url 'login' %}" class="logout-btn">Back</a>
-</div>
+    <section class="card-container">
+        <!-- Dummy Departments -->
+        {% for dept in departments %}
+        <div class="branch-card">
+            <h2>{{ dept }}</h2>
+            <hr>
 
+            <h3 style="text-align: left; margin : 0px"><strong>Year:</strong></h3>
+            <div class="radio-row">
+                <label><input type="radio" name="year_{{ dept }}" value="FY"> FY</label>
+                <label><input type="radio" name="year_{{ dept }}" value="SY"> SY</label>
+                <label><input type="radio" name="year_{{ dept }}" value="TY"> TY</label>
+                <label><input type="radio" name="year_{{ dept }}" value="4Y"> 4Y</label>
+            </div>
+            <h3 style="text-align: left; margin : 0px"><strong>Division:</strong></h3>
+            <div class="radio-row">
+                {% comment %} <strong>Division:</strong> {% endcomment %}
+                <label><input type="radio" name="div_{{ dept }}" value="A"> A</label>
+                <label><input type="radio" name="div_{{ dept }}" value="B"> B</label>
+                <label><input type="radio" name="div_{{ dept }}" value="C"> C</label>
+                <label><input type="radio" name="div_{{ dept }}" value="D"> D</label>
+                <label><input type="radio" name="div_{{ dept }}" value="E"> E</label>
+                <label><input type="radio" name="div_{{ dept }}" value="F"> F</label>
+            </div>
+
+<button class="view-btn" onclick="viewBranchTimetable('{{ dept }}')">📅 View Timetable</button>
+        </div>
+
+        {% endfor %}
+    </section>
+</body>
+<script>
+  function viewBranchTimetable(dept) {
+    const year = document.querySelector(`input[name="year_${dept}"]:checked`);
+    const div = document.querySelector(`input[name="div_${dept}"]:checked`);
+
+    if (!year || !div) {
+      alert("Please select both year and division.");
+      return;
+    }
+
+    const identifier = `${dept}-${year.value}-${div.value}`;
+    window.location.href = `/schedule/${identifier}/`;  // Adjust path if needed
+  }
+</script>
+
+
+</html>
