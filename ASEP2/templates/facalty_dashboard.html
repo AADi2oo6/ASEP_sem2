@@ -5,7 +5,9 @@
 
 {% block head %}
 {% load static %}
-    <link rel="stylesheet" href="{% static 'css/student_dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+  <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+
 {% endblock head %}
 
 
@@ -31,7 +33,7 @@
     <div class="card">
       <h3>🧾 Check Availability</h3>
       <p>Find out which rooms are free for extra sessions.</p>
-      <a href="/freeclassrooms">Open</a>
+      <a href="/RoomStatusPage">Open</a> 
     </div>
   
     <div class="card">

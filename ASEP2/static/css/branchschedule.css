@@ -1,136 +1,104 @@
 body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(145deg, #263d64, #1e2f4f);
-    color: #f0f0f0;
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(145deg, #0f1e46, #182848);
+  color: #f0f0f0;
 }
 
-/* Header */
 .dashboard-header {
-    text-align: center;
-    padding: 30px 0;
-    background-color: #1c2e4a;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-}
-
-.dashboard-header h1 {
-    margin-bottom: 10px;
+  text-align: center;
+  padding: 30px 0;
+  background-color: #0a1734;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 .logout-btn {
-    background: #ff4b5c;
-    padding: 8px 16px;
-    color: white;
-    border-radius: 6px;
-    text-decoration: none;
-    margin-top: 10px;
+  background: #ff4b5c;
+  padding: 8px 16px;
+  color: white;
+  border-radius: 6px;
+  text-decoration: none;
+  margin-top: 10px;
+  display: inline-block;
+}
+
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  padding: 40px;
+}
+
+.branch-card {
+  background-color: #2d4469;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.branch-card h2 {
+  margin-bottom: 15px;
+  color: #fff;
+}
+
+.checkbox-group {
+  text-align: left;
+  margin: 10px 0;
+  padding-left: 10px;
+}
+
+.checkbox-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.view-btn {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 8px 12px;
+  background-color: #4caf50;
+  color: white;
+  border-radius: 6px;
+  text-decoration: none;
+}
+.radio-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 10px 0;
+}
+
+.radio-row strong {
+    min-width: 80px;
     display: inline-block;
 }
 
-/* Dropdowns */
-.dropdown-wrapper {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 15px;
+/* Add pointer cursor on radio button hover */
+.radio-row input[type="radio"]:hover {
+    cursor: pointer;
 }
 
-.dropdown-wrapper select {
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 16px;
-    background-color: #fff;
-    color: #000;
-}
 
-/* Timetable Wrapper */
-.schedule-wrapper {
-    padding: 30px;
-    overflow-x: auto;
-}
+@media screen and (max-width: 600px) {
+  .card-container {
+    grid-template-columns: 1fr; /* Stack one per row */
+    padding: 20px;
+  }
 
-/* Grid Layout */
-.schedule-table {
-    display: grid;
-    grid-template-columns: 100px repeat(6, 1fr);
-    gap: 10px;
-}
-
-.schedule-row {
-    display: contents;
-}
-
-.schedule-header .day,
-.schedule-header .time-slot {
-    font-weight: bold;
-    background-color: #2d4469;
-    text-align: center;
-    padding: 10px;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-/* Time Column */
-.time-slot {
-    background-color: #1f3559;
-    padding: 10px;
-    border-radius: 10px;
-    text-align: center;
-    font-weight: bold;
-}
-
-/* Class Boxes */
-.schedule-box {
-    background-color: #3a5a89;
-    padding: 10px;
-    border-radius: 10px;
-    text-align: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    font-size: 14px;
-    color: #000;
-    font-weight: bold;
-}
-
-/* Highlight for current day */
-.highlight-day {
-    background-color: #ffb347 !important;
-    color: #000;
-    font-weight: bold;
-}
-
-.highlight-box {
-    border-left: 5px solid #ffa500 !important;
-    box-shadow: 0 0 10px rgba(255, 165, 0, 0.7);
-}
-
-/* Class Types */
-.theory-class {
-    background-color: #d4edda; /* Light green */
-    color: #000;
-}
-
-.lab-class {
-    background-color: #d1ecf1; /* Light blue */
-    color: #000;
-}
-
-.tutorial-class {
-    background-color: #fff3cd; /* Light yellow */
-    color: #000;
-}
-
-.empty-class {
-    background-color: #f0f0f0; /* Light gray */
-    color: #aaa;
-}
-
-/* Footer */
-footer {
-    text-align: center;
+  .branch-card {
     padding: 15px;
-    font-size: 14px;
-    background-color: #1c2e4a;
-    margin-top: auto;
+  }
+
+  .radio-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .view-btn {
+    width: 100%;
+    text-align: center;
+  }
 }

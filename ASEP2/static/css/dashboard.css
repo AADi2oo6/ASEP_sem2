@@ -9,7 +9,7 @@ html, body {
 /* Let the main content grow and push footer down */
 body {
   font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(145deg, #263d64, #1e2f4f);
+  background: linear-gradient(145deg,  #0f1e46, #182848);
   color: #f0f0f0;
 }
 
@@ -17,7 +17,7 @@ body {
 .dashboard-header {
   text-align: center;
   padding: 30px 0;
-  background-color: #1c2e4a;
+  background-color: #0a1734;
   box-shadow: 0 2px 10px rgba(0,0,0,0.2);
 }
 
@@ -87,6 +87,78 @@ footer {
   text-align: center;
   padding: 15px;
   font-size: 14px;
-  background-color: #1c2e4a;
+  background-color: #0a1734;
   margin-top: auto; /* Sticks to bottom */
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    padding: 20px;
+    gap: 15px;
+  }
+  .card {
+    height: 180px;
+    padding: 16px;
+  }
+  .bell-icon {
+    width: 48px;
+    height: 48px;
+  }
+  .announcement-popup {
+    right: 20px;
+    width: 90vw;
+    max-width: 350px;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard-header {
+    padding: 20px 0;
+    font-size: 1.1em;
+  }
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    padding: 10px;
+    gap: 10px;
+  }
+  .card {
+    height: auto;
+    min-height: 160px;
+    padding: 12px;
+    font-size: 16px;
+  }
+  .bell-icon {
+    width: 40px;
+    height: 40px;
+  }
+  .announcement-popup {
+    top: 70px;
+    right: 5vw;
+    width: 90vw;
+    max-width: 98vw;
+    padding: 10px;
+  }
+  footer {
+    font-size: 13px;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 400px) {
+  .dashboard-header {
+    padding: 12px 0;
+    font-size: 1em;
+  }
+  .card {
+    font-size: 15px;
+    padding: 8px;
+  }
+  .announcement-popup {
+    top: 60px;
+    right: 2vw;
+    padding: 6px;
+  }
 }

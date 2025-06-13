@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+{% load static %}
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+
     {% block title %}
     <title>Student Dashboard</title>
     {% endblock title %}
@@ -11,8 +14,57 @@
 {% block head %}
     
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/student_dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
 {% endblock head %}
+<style>
+  .bell-icon {
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  filter: brightness(1.1);
+  transition: transform 0.2s ease;
+}
+
+.bell-icon:hover {
+  transform: scale(1.1);
+}
+
+/* Popup container */
+.announcement-popup {
+  position: absolute;
+  top: 80px;
+  right: 50px;
+  width: 350px;
+  max-height: 400px;
+  background-color: #1c2a45;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.6);
+  overflow-y: auto;
+  z-index: 1000;
+  display: none;
+  padding: 15px;
+}
+
+.announcement-popup h3 {
+  margin-top: 0;
+  font-size: 18px;
+  border-bottom: 1px solid #445;
+  padding-bottom: 8px;
+}
+
+.announcement-item {
+  background-color: #2d4469;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+.announcement-item p {
+  margin: 4px 0;
+  font-size: 14px;
+}
+
+</style>
 
 </head>
 {% block body %}
@@ -22,7 +74,26 @@
     <h1>Welcome, {{ name }}</h1>
     <p>Your personalized student dashboard</p>
     <a href="{% url 'index' %}" class="logout-btn">Logout</a>
+    <div style="position: absolute; top: 30px; right: 80px;">
+      <img src="{% static 'icons/bell1.png' %}" class="bell-icon" onclick="toggleAnnouncements()" alt="Notifications" />
+    </div>
   </header>
+<div id="announcementPopup" class="announcement-popup">
+  <h3>📢 Announcements</h3>
+  {% for ann in announcements %}
+    <div class="announcement-item">
+      <strong>{{ ann.subject }}</strong>
+      <p>{{ ann.content }}</p>
+      <small>📅 {{ ann.created_at|date:"d M Y" }}</small>
+      {% if ann.attachment %}
+        <br><a href="{{ ann.attachment.url }}" target="_blank" style="color: #9df;">📎 Attachment</a>
+      {% endif %}
+    </div>
+  {% empty %}
+    <p>No new announcements.</p>
+  {% endfor %}
+</div>
+
 
   <section class="dashboard-grid">
     <div class="card">
@@ -41,7 +112,7 @@
     <div class="card">
       🏫<h3> Room Timetable</h3>
       <p>Get the complete class schedule for every room</p>
-      <a href="/buildingpage">Open</a>
+      <a href="/RoomStatusPage">Open</a>
     </div>
 
     <div class="card">
@@ -56,5 +127,22 @@
     <p>© 2025 Student Dashboard | VIT College</p>
 </footer>
 {% endblock body %}
+
 </body>
+<script>
+  function toggleAnnouncements() {
+    const popup = document.getElementById("announcementPopup");
+    popup.style.display = popup.style.display === "none" ? "block" : "none";
+  }
+
+  // Optional: Close on outside click
+  window.addEventListener('click', function(e) {
+    const popup = document.getElementById("announcementPopup");
+    const bell = document.querySelector(".bell-icon");
+    if (!popup.contains(e.target) && !bell.contains(e.target)) {
+      popup.style.display = "none";
+    }
+  });
+</script>
+
 </html>

@@ -6,6 +6,8 @@
     {% comment %} <link rel="stylesheet" href="faculty.css"> {% endcomment %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/faculty.css' %}">
+  <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+
 
 </head>
 <body>
@@ -35,7 +37,7 @@
                     <h2>{{ i.Name }}</h2>
                     <p>Department: Computer Science</p>
                     <div class="card-actions">
-                        <a href="{% url 'teacher_schedule' i.Name %}" class="btn">View</a>
+                        <a href="schedule/{{i.Name}}/" class="btn">View</a>
                         <a href="/media/timetables/{{ i.Name }}.pdf" class="btn download">Download</a>
                     </div>
                 </div>  

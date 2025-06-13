@@ -2,81 +2,185 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Send Announcement</title>
+  <title>Faculty Announcements</title>
   {% load static %}
   <link rel="stylesheet" href="{% static 'css/announcement.css' %}">
+  <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+
+  <style>
+    .container {
+  display: flex;
+  justify-content: center;
+  align-items: stretch; /* 🔄 Align heights */
+  gap: 30px;
+  padding: 40px;
+  flex-wrap: wrap;
+  min-height: 600px; /* optional */
+}
+
+.form-box,
+.announcement-panel {
+  background: #0f2747;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+.announcement-panel {
+  justify-content: flex-start;
+}
+
+.announcement-list {
+  overflow-y: auto;
+  max-height: 590px; /* to match form box */
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 12px;
+}
+.attachment-link {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 6px 12px;
+  background-color:rgb(0, 43, 100);
+  color: #f0f0f0;
+  text-decoration: none;
+  font-weight: 500;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+}
+
+.attachment-link:hover {
+  background-color:rgb(4, 56, 124);
+  color: #fff;
+  text-decoration: underline;
+}
+.message-container {
+  margin-bottom: 20px;
+}
+
+.success-message {
+  background-color: #d4edda;
+  border: 1px solid #155724;
+  color: #155724;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-weight: bold;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+
+  </style>
 </head>
 <body>
   <header class="dashboard-header">
     <h1>📢 Faculty Announcements</h1>
     <p>Send important updates to selected branch and division.</p>
-    <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+    <a href="javascript:history.back()" class="btn back-btn">Back</a>
   </header>
-
-  <div class="announcement-container">
-    <textarea placeholder="Type your announcement here..."></textarea>
-
-    <label for="branch">Select Branch:</label>
-    <select id="branch" onchange="updateDivisions()">
-      <option value="">-- Select Branch --</option>
-      <option value="CS">CS</option>
-      <option value="CS-AIML">CS-AIML</option>
-      <option value="CS-AI">CS-AI</option>
-      <option value="AIDS">AIDS</option>
-      <option value="IT">IT</option>
-      <option value="CS-SE">CS-SE</option>
-      <option value="CS-DS">CS-DS</option>
-      <option value="CS-CBI">CS-CBI</option>
-      <option value="Instrumentation">Instrumentation</option>
-      <option value="ENTC">ENTC</option>
-      <option value="Mech">Mech</option>
-      <option value="Civil">Civil</option>
-    </select>
-
-    <label for="division">Select Division:</label>
-    <select id="division">
-      <option value="">-- Select Division --</option>
-    </select>
-
-    <button class="send-btn">Send Announcement</button>
+  {% if messages %}
+  <div class="message-container">
+    {% for message in messages %}
+      <div class="success-message">{{ message }}</div>
+    {% endfor %}
   </div>
+{% endif %}
+
+  <main class="container">
+    <div class="form-box">
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+          <label>Subject:</label>
+          <input type="text" name="subject" required />
+        </div>
+
+        <div class="form-group">
+          <label>Content:</label>
+          <textarea name="content" rows="4" placeholder="Type your announcement here..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Attachment:</label>
+          <input type="file" name="attachment" />
+        </div>
+
+        <div class="multi-grid">
+          <div>
+            <label>Year:</label>
+            <select name="year" multiple>
+              <option>FY</option>
+              <option>SY</option>
+              <option>TY</option>
+              <option>4Y</option>
+            </select>
+          </div>
+
+          <div>
+            <label>Branch:</label>
+            <select name="branch" multiple>
+              <option>CS</option>
+              <option>IT</option>
+              <option>CSAIML</option>
+              <option>AIDS</option>
+            </select>
+          </div>
+
+          <div>
+            <label>Section:</label>
+            <select name="section" multiple>
+              <option>A</option>
+              <option>B</option>
+              <option>C</option>
+              <option>D</option>
+              <option>E</option>
+              <option>F</option>
+            </select>
+          </div>
+
+          <div>
+            <label>Batch:</label>
+            <select name="batch" multiple>
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" class="btn submit-btn">Send Announcement</button>
+      </form>
+    </div>
+
+    <div class="announcement-panel">
+      <h3>📋 Previous Announcements</h3>
+      <div class="announcement-list">
+        {% for a in announcements reversed %}
+        <div class="announcement-entry">
+          <strong>Subject: {{ a.subject }}</strong>
+          <hr>
+          <p>{{ a.content }}</p>
+          {% if a.attachment %}
+            <a href="{{ a.attachment.url }}" class="attachment-link" target="_blank">
+                📎 View Attachment
+              </a>         
+           {% endif %}
+          <br>
+          <small>Posted by {{ a.teacher_name }} on {{ a.created_at|date:"d M Y" }}</small>
+        </div>
+
+        {% endfor %}
+      </div>
+      
+        
+      </div>
+    </div>
+  </main>
 
   <footer>
-    <p>© 2025 Faculty Dashboard | VIT College</p>
+    © 2025 Faculty Dashboard | VIT College
   </footer>
-
-  <script>
-    const divisionsMap = {
-      "CS": 12,
-      "CS-AIML": 6,
-      "CS-AI": 6,
-      "AIDS": 6,
-      "IT": 6,
-      "CS-SE": 3,
-      "CS-DS": 3,
-      "CS-CBI": 3,
-      "Instrumentation": 3,
-      "ENTC": 6,
-      "Mech": 5,
-      "Civil": 1
-    };
-
-    function updateDivisions() {
-      const branch = document.getElementById("branch").value;
-      const divisionSelect = document.getElementById("division");
-      divisionSelect.innerHTML = `<option value="">-- Select Division --</option>`;
-      if (divisionsMap[branch]) {
-        const count = divisionsMap[branch];
-        for (let i = 0; i < count; i++) {
-          const division = String.fromCharCode(65 + i); // A, B, C...
-          const option = document.createElement("option");
-          option.value = division;
-          option.textContent = division;
-          divisionSelect.appendChild(option);
-        }
-      }
-    }
-  </script>
 </body>
 </html>

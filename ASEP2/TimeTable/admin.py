@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import StudentsTT,FacultysTT
+from .models import StudentsTT,FacultysTT,TempFacultysTT,CanceledClass
 import re
 from datetime import datetime, timedelta
 
@@ -106,3 +106,42 @@ class FacultysTTAdmin(admin.ModelAdmin):
                 end_hour -= 12
             return f"{start_hour}-{end_hour} {period}"
         return last_slot
+
+@admin.register(TempFacultysTT)
+class TempFacultysTTAdmin(admin.ModelAdmin):
+    list_display = [
+        "id",
+        "day",
+        "time_slot",
+        "room_no",
+        "subject_name",
+        "teachersID",
+        "teacher_name",
+        "year",
+        "class_type",
+        "course_name",
+        "division",
+        "batch",
+        "start_date",
+        "end_date"
+    ]
+
+@admin.register(CanceledClass)
+class CandeledClassAdmin(admin.ModelAdmin):
+    list_display = [
+        "id",
+        "teacher_name",
+        "room_no",
+        "subject_name",
+        "course_name", 
+        'division' ,
+        'batch',
+        'class_type' ,
+        "day",
+        "time_slot",
+        "start_date",
+        "end_date",
+        "created_at"
+    ]
+    search_fields = ("subject_name", "course_name","room_no")
+

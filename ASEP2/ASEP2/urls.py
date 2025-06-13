@@ -27,14 +27,15 @@ urlpatterns = [
     path("logOut/",views.logout_views,name="logout"),
     path('dashboard/', views.login_view, name='login'),
     path('schedule/', views.schedule, name='own_schedule'),
-    path('schedule/<str:Name>/', views.schedule, name='teacher_schedule'),
-    path("buildingpage",views.buildingpage),
-    path("rooms",views.rooms),
-    path("floor",views.floor),
-    path("freeclassrooms",views.freeclassrooms),
-    path("faculty_timetable",views.timeTalbePage),
+    path('schedule/<str:identifier>/', views.schedule, name='generic_schedule'),
+    path("RoomStatusPage",views.RoomStatusPage),
+
+    # path("freeclassrooms",views.freeclassrooms),
+    path("faculty_timetable",views.F_timeTalbePage),
     path("branchschedule",views.branchschedule),
-    path("announcements",views.announcements),
+    path("announcements",views.faculty_announcement,name = "announcements"),
+    path("update_schedule/",views.update_schedule),
+    path('cancel_schedule/', views.cancel_schedule, name='cancel_schedule')
 ]
 
 if settings.DEBUG:

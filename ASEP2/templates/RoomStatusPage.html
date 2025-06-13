@@ -4,20 +4,33 @@
 <head>
   <meta charset="UTF-8">
   <title>Live Room Status</title>
-  <link rel="stylesheet" href="{% static 'css/buildingpage.css' %}">
+  <link rel="stylesheet" href="{% static 'css/RoomStatusPage.css' %}">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+
+  <style>
+  header {
+    background-color: rgb(4, 19, 49);
+    margin: 0;
+    padding: 20px 0; /* Remove left/right padding */
+    width: 100%;
+    box-sizing: border-box;
+    z-index: 1000;
+  }
+ 
+  </style>
 </head>
 <body>
+  <header>
+    <h1>🏫 College Room Timetables</h1>
+    <p>Live status of all rooms — find free ones or locate a teacher</p>
+    <a href="javascript:history.back()" class="btn back-btn">Back</a>
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search by Room No or Teacher Name..." onkeyup="filterRooms()">
+    </div>
+  </header>
+  
   <div class="container">
-    <header>
-      <h1>🏫 College Room Timetables</h1>
-      <p>Live status of all rooms — find free ones or locate a teacher</p>
-      <a href="javascript:history.back()" class="btn back-btn">Back</a>
-      <div class="search-bar">
-        <input type="text" id="searchInput" placeholder="Search by Room No or Teacher Name..." onkeyup="filterRooms()">
-      </div>
-    </header>
-
     <div class="filter-controls">
       <button class="btn toggle-btn" onclick="toggleVacantOnly()">Show Only Empty Classrooms</button>
     </div>
@@ -28,12 +41,14 @@
       {% for room in rooms %}
         <div class="room-card {{ room.status }} {% if forloop.counter > 6 %}hidden-card{% endif %}" 
            data-room="{{ room.number }}" data-teacher="{{ room.teacher }}">
-        <h3>Room {{ room.number }}</h3>
+        <h3>Room: {{ room.number }}</h3>
+        <hr>
         <p><strong>Type:</strong> {{ room.type }}</p>
-        <p><strong>Class:</strong> {{ room.class }}</p>
         <p><strong>Teacher:</strong> {{ room.teacher }}</p>
+        <p><strong>Subject:</strong> {{ room.subject }}</p>
+        <p><strong>Class:</strong> {{ room.class }}</p>
         <div class="card-actions">
-          <a href="#" class="btn">View</a>
+          <a href="/schedule/{{room.number}}/" class="btn">View TT</a>
         </div>
         </div>
       {% endfor %}
