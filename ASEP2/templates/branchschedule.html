@@ -6,8 +6,10 @@
     <meta charset="UTF-8" />
     <title>Branch Timetable</title>
     <link rel="stylesheet" href="{% static 'css/branchschedule.css' %}" />
-</head>
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
 
+   
+</head>
 <body>
     <div class="dashboard-header">
         <h1>📘 Branch Timetable</h1>
@@ -40,8 +42,7 @@
                 <label><input type="radio" name="div_{{ dept }}" value="F"> F</label>
             </div>
 
-<button class="view-btn" onclick="viewBranchTimetable('{{ dept }}')">📅 View Timetable</button>
-        </div>
+<button class="view-btn" onclick="viewBranchTimetable('{{ dept|escapejs }}')">📅 View Timetable</button>        </div>
 
         {% endfor %}
     </section>

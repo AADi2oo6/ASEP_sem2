@@ -79,3 +79,26 @@ body {
 .radio-row input[type="radio"]:hover {
     cursor: pointer;
 }
+
+
+@media screen and (max-width: 600px) {
+  .card-container {
+    grid-template-columns: 1fr; /* Stack one per row */
+    padding: 20px;
+  }
+
+  .branch-card {
+    padding: 15px;
+  }
+
+  .radio-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .view-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
