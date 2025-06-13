@@ -94,7 +94,6 @@ def schedule(request, identifier=None):
     temp_tt = []
     canceled = []
 
-    # 🌐 Determine type of identifier
     if identifier is None and role == "Faculty":
         teacher_name = request.session.get("Name")
         TTd = FacultysTT.objects.filter(teacher_name__Name=teacher_name)
@@ -223,7 +222,7 @@ def update_schedule(request):
         year = request.POST.get("year")
         batch = request.POST.get("batch")
 
-        # Assume teacher info is in session
+        # getting teacher info from session
         user = request.session.get("user")
         teacher_name = user["Name"]
 
@@ -280,8 +279,8 @@ def cancel_schedule(request):
             time_slot = data.get("time_slot")
             cancel_type = data.get("cancel_type")
             RoomNO = data.get("room_no")
-            print("_________________________________________________________")
-            print("ROOM NO:", RoomNO)
+            # print("_________________________________________________________")
+            # print("ROOM NO:", RoomNO)
 
 
             user = request.session.get("user")
@@ -371,23 +370,23 @@ def F_timeTalbePage(request):
     fdata = Flogin.objects.all()
     return render(request, "FacultyTimetable.html", {"Names": fdata})  # Pass Names to the template
 
+from datetime import date  # Make sure this is imported
 
 def RoomStatusPage(request):
-    # Get all unique room numbers
     TTd = FacultysTT.objects.all()
-    roomNO = TTd.values_list('room_no', flat=True).distinct()
+    tempTTd = TempFacultysTT.objects.filter(end_date__gte=date.today())
+    roomNO = set(
+    list(FacultysTT.objects.values_list('room_no', flat=True)) +
+    list(TempFacultysTT.objects.values_list('room_no', flat=True))
+)
+
 
     UserData = request.session.get('user')
     role = request.session.get('role')
-    print(" ;   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;")
-    print(UserData)
-    print(role)
 
-    # Get current day and current time slot
     now = datetime.now()
     current_day = now.strftime("%A")
 
-    # Mapping current hour to time slot
     hour_map = {
         8: '8-9 AM', 9: '9-10 AM', 10: '10-11 AM', 11: '11-12 PM',
         12: '12-1 PM', 13: '1-2 PM', 14: '2-3 PM', 15: '3-4 PM',
@@ -404,23 +403,36 @@ def RoomStatusPage(request):
     }
 
     for room in roomNO:
-        # Default values
         room_info = {
             "number": room,
-            "type": "Classroom",  # Default, can adjust based on room naming if needed
-            "class": "", 
+            "type": "Classroom",
+            "class": "",
             "teacher": "",
-            "subject":"", 
+            "subject": "",
             "status": "vacant"
         }
 
         if current_slot:
-            scheduled = TTd.filter(room_no=room, day=current_day, time_slot=current_slot).first()
-            if scheduled:
-                room_info["class"] = f"{scheduled.course_name} ({scheduled.div}) , Batch : {scheduled.batch}"
-                room_info["teacher"] = scheduled.teacher_name
-                room_info["subject"] = f"{scheduled.subject_name} ({scheduled.class_type})"
+            # First check in TempFacultysTT
+            temp_class = tempTTd.filter(
+                room_no=room,
+                day=current_day,
+                time_slot=current_slot,
+                end_date__gte=date.today()
+            ).first()
+
+            if temp_class:
+                room_info["class"] = f"{temp_class.course_name} ({temp_class.division}) , Batch : {temp_class.batch}"
+                room_info["teacher"] = temp_class.teacher_name
+                room_info["subject"] = f"{temp_class.subject_name} ({temp_class.class_type})"
                 room_info["status"] = ""
+            else:
+                scheduled = TTd.filter(room_no=room, day=current_day, time_slot=current_slot).first()
+                if scheduled:
+                    room_info["class"] = f"{scheduled.course_name} ({scheduled.div}) , Batch : {scheduled.batch}"
+                    room_info["teacher"] = scheduled.teacher_name
+                    room_info["subject"] = f"{scheduled.subject_name} ({scheduled.class_type})"
+                    room_info["status"] = ""
 
         # Assign building
         if room.startswith("1"):
@@ -436,7 +448,11 @@ def RoomStatusPage(request):
             room_info["type"] = "Classroom"
             room_data["Building 4 : INSTRUMENTATION"].append(room_info)
 
-    return render(request, 'RoomStatusPage.html', {'room_data': room_data,'role':role,"UserData":UserData})
+    return render(request, 'RoomStatusPage.html', {
+        'room_data': room_data,
+        'role': role,
+        "UserData": UserData
+    })
 
 
 def branchschedule(request):
