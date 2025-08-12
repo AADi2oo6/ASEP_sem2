@@ -73,7 +73,7 @@
     <header class="dashboard-header">
     <h1>Welcome, {{ name }}</h1>
     <p>Your personalized student dashboard</p>
-    <a href="{% url 'index' %}" class="logout-btn">Logout</a>
+    <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
     <div style="position: absolute; top: 30px; right: 80px;">
       <img src="{% static 'icons/bell1.png' %}" class="bell-icon" onclick="toggleAnnouncements()" alt="Notifications" />
     </div>
